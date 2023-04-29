@@ -18,9 +18,8 @@ Mail Storm
 
 # Enemy Types
 
-# Combats
+## Rat
 
-Rat
 1hp
 Abilities: (Pick 1 per turn, random)
 
@@ -28,6 +27,8 @@ Abilities: (Pick 1 per turn, random)
     -   1 damage
 -   Screech
     -   Call in new rats in orthogonally adjacent spaces. (Possibly random chance of success for each square? Depends on balance.)
+
+# Combats
 
 ## A Rat Horde
 

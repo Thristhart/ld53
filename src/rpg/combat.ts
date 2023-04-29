@@ -12,6 +12,12 @@ interface CombatDescription {
     enemies: Array<{ type: EnemyType; x: number; y: number }>;
     players: (typeof Player)[];
     playerLevel: number;
+    startingSide: StartingSide;
+}
+
+enum StartingSide{
+    player = 0,
+    enemy = 1
 }
 
 function makeCombat(a: CombatDescription) {
@@ -31,6 +37,7 @@ export const combats = {
             { type: "rat", x: 2, y: 3 },
             { type: "rat", x: 3, y: 3 },
         ],
+        startingSide: StartingSide.player
     }),
 } as const;
 
