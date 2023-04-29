@@ -20,7 +20,6 @@ export function horizontalLine(target: Player | GridLocation): GridLocation[] {
         return [];
     }
     const [_, y] = target;
-    console.log(y);
     const targets: GridLocation[] = [];
     for (let x = 0; x < currentCombat.width; x++) {
         targets.push([x, y]);
