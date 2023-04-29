@@ -1,0 +1,23 @@
+{
+  "name": "ld53",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Thristhart/ld53.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Thristhart/ld53/issues"
+  },
+  "homepage": "https://github.com/Thristhart/ld53#readme",
+  "devDependencies": {
+    "typescript": "^5.0.4",
+    "vite": "^4.3.3"
+  }
+}
