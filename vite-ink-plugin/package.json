@@ -1,0 +1,6 @@
+{
+    "name": "vite-ink-plugin",
+    "devDependencies": {
+        "@types/node": "^16.10.2"
+    }
+}
