@@ -3,7 +3,7 @@ import { Canvas } from "./Canvas";
 import "./RPG.css";
 import { useEffect, useRef } from "preact/hooks";
 import { useSignal } from "@preact/signals";
-import { currentActionTarget, currentCombat } from "~/rpg/combat";
+import { currentActionTarget, currentCombat, performCurrentPlayerAction } from "~/rpg/combat";
 import { Player } from "~/rpg/basePlayer";
 import { Actions, selectedAction } from "./Actions";
 
@@ -41,6 +41,9 @@ export function RPG() {
                             currentActionTarget.value = location;
                         }
                     }}
+                    onClick={
+                        currentCombat?.currentTurn.value instanceof Player ? performCurrentPlayerAction : undefined
+                    }
                 />
             </div>
             <section id="status">

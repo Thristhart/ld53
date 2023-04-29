@@ -7,6 +7,8 @@ import { Player } from "./basePlayer";
 import { Cassie } from "./players/cassie";
 import { Actor, isActor } from "./actor";
 import { BaseEnemy } from "./enemies/baseEnemy";
+import { selectedAction } from "~/ui/Actions";
+import { animate } from "./animate";
 
 interface CombatDescription {
     gridWidth: number;
@@ -149,4 +151,22 @@ export function endCombat() {
 
 export function shouldShowCombat() {
     return currentCombat !== undefined;
+}
+
+export async function performCurrentPlayerAction() {
+    if (!currentCombat || !selectedAction.value || !currentActionTarget.value) {
+        return;
+    }
+    const action = selectedAction.value;
+    const targets = action.targeting(currentActionTarget.value);
+    if (targets.length === 0) {
+        return;
+    }
+    if (action.animation) {
+        await animate(action.animation.animate, action.animation.duration);
+    }
+    console.log("do action", action);
+    selectedAction.value = undefined;
+    currentActionTarget.value = undefined;
+    nextTurn();
 }
