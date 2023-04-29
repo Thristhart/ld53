@@ -7,8 +7,9 @@ import { GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH } from "../render";
 export class BaseEnemy extends BaseEntity implements Actor {
     hp = 50;
     actions: Action[] = [];
+    displayName: string = "";
     draw(context: CanvasRenderingContext2D) {
-        if (currentCombat?.currentTurn === this) {
+        if (currentCombat?.currentTurn.value === this) {
             context.strokeStyle = "white";
             context.strokeRect(
                 this.x * GRID_SQUARE_WIDTH,

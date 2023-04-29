@@ -1,0 +1,36 @@
+.actions {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+.actions button:before {
+    content: "   ";
+    white-space: pre;
+}
+.actions button:focus:before {
+    content: "> ";
+}
+.actions button:focus {
+    outline: none;
+    border: none;
+}
+.actions button {
+    border: none;
+    background: transparent;
+    color: white;
+    font-family: var(--ui-font-family);
+    font-size: var(--dialogue-font-size);
+}
+.cancel {
+    border: none;
+    background: transparent;
+    color: white;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1rem;
+    font-size: 1rem;
+}

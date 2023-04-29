@@ -13,6 +13,7 @@ const ratSheet: SpriteSheet = {
 
 export class Rat extends BaseEnemy {
     actions: Action[] = [];
+    displayName: string = "Rat";
     draw(context: CanvasRenderingContext2D) {
         drawSprite(
             context,

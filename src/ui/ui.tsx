@@ -14,7 +14,7 @@ if (!uiContainer) {
 }
 
 function UI() {
-    const [isTitleScreen, setIsTitleScreen] = useState(true);
+    const [isTitleScreen, setIsTitleScreen] = useState(false);
 
     if (isTitleScreen) {
         return (

@@ -1,4 +1,4 @@
-import { signal } from "@preact/signals";
+import { Signal, signal } from "@preact/signals";
 import { renderUI } from "~/ui/ui";
 import { EnemyType } from "./enemies";
 import { BaseEntity } from "./baseEntity";
@@ -17,9 +17,9 @@ interface CombatDescription {
     startingSide: StartingSide;
 }
 
-enum StartingSide{
+enum StartingSide {
     player = 0,
-    enemy = 1
+    enemy = 1,
 }
 
 function makeCombat(a: CombatDescription) {
@@ -32,7 +32,7 @@ export const combats = {
         gridWidth: 5,
         gridHeight: 5,
         players: [Cassie, Cassie, Cassie, Cassie],
-        playerLevel: 1,
+        playerLevel: 4,
         enemies: [
             { type: "rat", x: 1, y: 3 },
             { type: "rat", x: 2, y: 2 },
@@ -40,7 +40,7 @@ export const combats = {
             { type: "rat", x: 2, y: 3 },
             { type: "rat", x: 3, y: 3 },
         ],
-        startingSide: StartingSide.player
+        startingSide: StartingSide.player,
     }),
 } as const;
 
@@ -52,7 +52,7 @@ interface CurrentCombat {
     players: Player[];
     entities: BaseEntity[];
     state: "won" | "lost" | "active";
-    currentTurn: Actor;
+    currentTurn: Signal<Actor>;
 }
 
 let lastTick = performance.now();
@@ -65,6 +65,8 @@ function updateGameTime(now: number) {
 
     updateCombatTimeAnimationFrame = requestAnimationFrame(updateGameTime);
 }
+
+export const currentActionTarget = signal<Player | [x: number, y: number] | undefined>(undefined);
 
 export function startCombat(combatName: Exclude<keyof typeof combats, "none">) {
     const combatDescription = combats[combatName];
@@ -84,7 +86,7 @@ export function startCombat(combatName: Exclude<keyof typeof combats, "none">) {
         height: combatDescription.gridHeight,
         players,
         entities,
-        currentTurn: players[0],
+        currentTurn: signal(players[0]),
     };
     if (import.meta.env.DEV) {
         //@ts-ignore
@@ -99,10 +101,10 @@ export function nextTurn() {
         return;
     }
     // TODO: skip if dead
-    if (currentCombat.currentTurn instanceof Player) {
-        const playerIndex = currentCombat.players.indexOf(currentCombat.currentTurn);
+    if (currentCombat.currentTurn.value instanceof Player) {
+        const playerIndex = currentCombat.players.indexOf(currentCombat.currentTurn.value);
         if (playerIndex < currentCombat.players.length - 1) {
-            currentCombat.currentTurn = currentCombat.players[playerIndex + 1];
+            currentCombat.currentTurn.value = currentCombat.players[playerIndex + 1];
             return;
         }
     }
@@ -127,10 +129,10 @@ export function nextTurn() {
         startIndex = entityTurns.indexOf(currentCombat.currentTurn);
     }
     if (startIndex >= entityTurns.length - 1) {
-        currentCombat.currentTurn = currentCombat.players[0];
+        currentCombat.currentTurn.value = currentCombat.players[0];
         return;
     }
-    currentCombat.currentTurn = entityTurns[startIndex + 1];
+    currentCombat.currentTurn.value = entityTurns[startIndex + 1];
 }
 
 export function endCombat() {

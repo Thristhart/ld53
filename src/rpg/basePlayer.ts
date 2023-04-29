@@ -5,6 +5,7 @@ export abstract class Player implements Actor {
     static actions: Action[] = [];
     actions: Action[];
     hp = 50;
+    displayName: string = "";
     constructor(level: number) {
         this.actions = (this.constructor as typeof Player).actions.slice(0, level);
     }

@@ -1,6 +1,15 @@
 #rpg {
     grid-area: gameplay;
-    overflow: hidden;
+    display: grid;
+    grid-template-areas:
+        "grid grid"
+        "empty status";
+    grid-template-rows: 1fr min-content;
+    grid-template-columns: var(--playerSize) 1fr;
+}
+#rpg #grid {
+    grid-area: grid;
+    position: relative;
 }
 #rpg canvas {
     image-rendering: pixelated;
@@ -10,4 +19,42 @@
     left: 0;
     right: 0;
     bottom: 0;
+}
+
+#status {
+    position: relative;
+    background-color: cornflowerblue;
+    grid-area: status;
+
+    margin-bottom: 2rem;
+    margin-left: 4rem;
+    margin-right: 4rem;
+
+    background-image: url("../assets/Panel_Status.png");
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    aspect-ratio: 1443/238;
+
+    max-width: 100rem;
+
+    color: white;
+    font-family: var(--ui-font-family);
+}
+.statusText {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    padding-left: 1rem;
+
+    box-sizing: border-box;
+    justify-content: center;
+    align-items: stretch;
+}
+.statusText h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
 }

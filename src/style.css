@@ -34,9 +34,3 @@ body[data-bg="nightforest"] {
 body[data-bg="cave"] {
     background-image: url("./assets/cave.jpg");
 }
-
-/** preload */
-body:after {
-    content: "";
-    background-image: url("./assets/cat_idle_hat_strip8.png");
-}

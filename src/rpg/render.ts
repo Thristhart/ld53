@@ -1,5 +1,6 @@
+import { selectedAction } from "~/ui/Actions";
 import { Player } from "./basePlayer";
-import { combatTime, currentCombat } from "./combat";
+import { combatTime, currentActionTarget, currentCombat } from "./combat";
 
 const camera = { x: 0, y: 0, scale: 1 };
 
@@ -26,6 +27,32 @@ function drawGrid(context: CanvasRenderingContext2D, width: number, height: numb
             gradient.addColorStop(1, COLOR_GRID_SQUARE_FILL_DARK);
             context.fillStyle = gradient;
             context.fillRect(x * GRID_SQUARE_WIDTH, y * GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH, GRID_SQUARE_HEIGHT);
+        }
+    }
+
+    if (
+        selectedAction.value &&
+        selectedAction.value.targetType === "grid" &&
+        currentActionTarget.value &&
+        !(currentActionTarget.value instanceof Player)
+    ) {
+        const targets = selectedAction.value.targeting(currentActionTarget.value);
+        for (const target of targets) {
+            if (!(target instanceof Player)) {
+                const [x, y] = target;
+                const gradient = context.createRadialGradient(
+                    x * GRID_SQUARE_WIDTH + GRID_SQUARE_WIDTH / 2,
+                    y * GRID_SQUARE_HEIGHT + GRID_SQUARE_HEIGHT / 2,
+                    0,
+                    x * GRID_SQUARE_WIDTH + GRID_SQUARE_WIDTH / 2,
+                    y * GRID_SQUARE_HEIGHT + GRID_SQUARE_HEIGHT / 2,
+                    GRID_SQUARE_HEIGHT * 1.2
+                );
+                gradient.addColorStop(0, "orange");
+                gradient.addColorStop(1, "red");
+                context.fillStyle = gradient;
+                context.fillRect(x * GRID_SQUARE_WIDTH, y * GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH, GRID_SQUARE_HEIGHT);
+            }
         }
     }
 
@@ -83,16 +110,16 @@ export const PLAYER_DRAW_HEIGHT = 200;
 function drawPlayers(context: CanvasRenderingContext2D, players: Player[]) {
     const startHeight = context.canvas.height / 2 - PLAYER_DRAW_HEIGHT * ((players.length - 1) / 2);
     players.forEach((player, index) => {
-        if (currentCombat?.currentTurn === player) {
+        if (currentCombat?.currentTurn.value === player) {
             context.strokeStyle = "white";
             context.strokeRect(
-                0,
+                leftPadding / 2 - PLAYER_DRAW_WIDTH / 2,
                 index * PLAYER_DRAW_HEIGHT + startHeight - PLAYER_DRAW_HEIGHT / 2,
                 PLAYER_DRAW_WIDTH,
                 PLAYER_DRAW_HEIGHT
             );
         }
-        player.draw(context, PLAYER_DRAW_WIDTH / 2, index * PLAYER_DRAW_HEIGHT + startHeight);
+        player.draw(context, leftPadding / 2, index * PLAYER_DRAW_HEIGHT + startHeight);
     });
 }
 
@@ -114,6 +141,24 @@ function fitAreaOnScreen(
 }
 
 const leftPadding = PLAYER_DRAW_WIDTH * 2;
+document.body.style.setProperty("--playerSize", `${leftPadding}px`);
+
+export function mouseLocationToGridLocation(
+    canvas: HTMLCanvasElement,
+    mouseX: number,
+    mouseY: number
+): [x: number, y: number] | undefined {
+    if (!currentCombat) {
+        return;
+    }
+    const x = Math.floor(((mouseX - leftPadding / 2 - canvas.width / 2) / camera.scale + camera.x) / GRID_SQUARE_WIDTH);
+    const y = Math.floor(((mouseY - canvas.height / 2) / camera.scale + camera.y) / GRID_SQUARE_HEIGHT);
+
+    if (x < 0 || x >= currentCombat.width || y < 0 || y >= currentCombat.height) {
+        return undefined;
+    }
+    return [x, y];
+}
 
 export function drawCombat(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
     context.imageSmoothingEnabled = false;

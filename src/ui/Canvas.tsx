@@ -40,6 +40,12 @@ export const Canvas = ({
         }
     }, []);
 
+    useEffect(() => {
+        if (canvasSignal.value) {
+            tick?.(canvasSignal.value, contextRef.current!);
+        }
+    }, [width, height]);
+
     useSignalEffect(() => {
         if (canvasSignal.value) {
             tick?.(canvasSignal.value, contextRef.current!);
