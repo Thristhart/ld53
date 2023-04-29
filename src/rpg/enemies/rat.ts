@@ -21,5 +21,6 @@ export class Rat extends BaseEnemy {
             this.y * GRID_SQUARE_HEIGHT + GRID_SQUARE_HEIGHT / 2,
             [0, 0]
         );
+        super.draw(context);
     }
 }

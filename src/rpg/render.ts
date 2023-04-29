@@ -81,9 +81,17 @@ export const PLAYER_DRAW_WIDTH = 200;
 export const PLAYER_DRAW_HEIGHT = 200;
 
 function drawPlayers(context: CanvasRenderingContext2D, players: Player[]) {
-    // todo: center in available vert space
     const startHeight = context.canvas.height / 2 - PLAYER_DRAW_HEIGHT * ((players.length - 1) / 2);
     players.forEach((player, index) => {
+        if (currentCombat?.currentTurn === player) {
+            context.strokeStyle = "white";
+            context.strokeRect(
+                0,
+                index * PLAYER_DRAW_HEIGHT + startHeight - PLAYER_DRAW_HEIGHT / 2,
+                PLAYER_DRAW_WIDTH,
+                PLAYER_DRAW_HEIGHT
+            );
+        }
         player.draw(context, PLAYER_DRAW_WIDTH / 2, index * PLAYER_DRAW_HEIGHT + startHeight);
     });
 }

@@ -5,6 +5,8 @@ import { BaseEntity } from "./baseEntity";
 import { Rat } from "./enemies/rat";
 import { Player } from "./basePlayer";
 import { Cassie } from "./players/cassie";
+import { Actor, isActor } from "./actor";
+import { BaseEnemy } from "./enemies/baseEnemy";
 
 interface CombatDescription {
     gridWidth: number;
@@ -32,6 +34,7 @@ export const combats = {
         players: [Cassie, Cassie, Cassie, Cassie],
         playerLevel: 1,
         enemies: [
+            { type: "rat", x: 1, y: 3 },
             { type: "rat", x: 2, y: 2 },
             { type: "rat", x: 1, y: 2 },
             { type: "rat", x: 2, y: 3 },
@@ -49,6 +52,7 @@ interface CurrentCombat {
     players: Player[];
     entities: BaseEntity[];
     state: "won" | "lost" | "active";
+    currentTurn: Actor;
 }
 
 let lastTick = performance.now();
@@ -64,20 +68,23 @@ function updateGameTime(now: number) {
 
 export function startCombat(combatName: Exclude<keyof typeof combats, "none">) {
     const combatDescription = combats[combatName];
+    const players = combatDescription.players.map((PlayerClass) => {
+        return new (PlayerClass as unknown as new (playerLevel: number) => Player)(combatDescription.playerLevel);
+    });
+    const entities = combatDescription.enemies.map((enemyDesc) => {
+        if (enemyDesc.type === "rat") {
+            return new Rat(enemyDesc.x, enemyDesc.y);
+        }
+        throw "Unimplemented enemyType";
+    });
     currentCombat = {
         name: combatName,
         state: "active",
         width: combatDescription.gridWidth,
         height: combatDescription.gridHeight,
-        players: combatDescription.players.map((PlayerClass) => {
-            return new (PlayerClass as unknown as new (playerLevel: number) => Player)(combatDescription.playerLevel);
-        }),
-        entities: combatDescription.enemies.map((enemyDesc) => {
-            if (enemyDesc.type === "rat") {
-                return new Rat(enemyDesc.x, enemyDesc.y);
-            }
-            throw "Unimplemented enemyType";
-        }),
+        players,
+        entities,
+        currentTurn: players[0],
     };
     if (import.meta.env.DEV) {
         //@ts-ignore
@@ -85,6 +92,45 @@ export function startCombat(combatName: Exclude<keyof typeof combats, "none">) {
     }
 
     updateCombatTimeAnimationFrame = requestAnimationFrame(updateGameTime);
+}
+
+export function nextTurn() {
+    if (!currentCombat) {
+        return;
+    }
+    // TODO: skip if dead
+    if (currentCombat.currentTurn instanceof Player) {
+        const playerIndex = currentCombat.players.indexOf(currentCombat.currentTurn);
+        if (playerIndex < currentCombat.players.length - 1) {
+            currentCombat.currentTurn = currentCombat.players[playerIndex + 1];
+            return;
+        }
+    }
+    const actorTurns = currentCombat.entities.filter(isActor) as (BaseEntity & Actor)[];
+    const entityTurns = actorTurns.sort((a, b) => {
+        if (a.x < b.x) {
+            return -1;
+        }
+        if (a.x > b.x) {
+            return 1;
+        }
+        if (a.y < b.y) {
+            return -1;
+        }
+        if (a.y > b.y) {
+            return 1;
+        }
+        return 0;
+    });
+    let startIndex = -1;
+    if (currentCombat.currentTurn instanceof BaseEnemy) {
+        startIndex = entityTurns.indexOf(currentCombat.currentTurn);
+    }
+    if (startIndex >= entityTurns.length - 1) {
+        currentCombat.currentTurn = currentCombat.players[0];
+        return;
+    }
+    currentCombat.currentTurn = entityTurns[startIndex + 1];
 }
 
 export function endCombat() {
