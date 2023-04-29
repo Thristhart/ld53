@@ -16,7 +16,7 @@ const catSheet: SpriteSheet = {
 const runDown: Action = {
     id: "runDown",
     name: "Run Down",
-    description: "Cassie drives the truck in a vertical line, damaging enemies.",
+    description: "Cassie drives the truck in a horizontal line, damaging enemies.",
     targetType: "grid",
     targeting: horizontalLine,
 };
