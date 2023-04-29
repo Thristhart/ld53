@@ -6,6 +6,7 @@ export interface Actor<ActionTypes = Action<Player> | Action<GridLocation>> {
     hp: number;
     displayName: string;
     doTurn: () => Promise<void>;
+    die: () => Promise<void>;
 }
 
 export function isActor(obj: object): obj is Actor {

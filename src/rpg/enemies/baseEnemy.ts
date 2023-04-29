@@ -24,4 +24,6 @@ export class BaseEnemy<ActionTypes = Action<Player> | Action<GridLocation>>
         }
     }
     async doTurn() {}
+
+    async die() {}
 }

@@ -12,4 +12,5 @@ export abstract class Player implements Actor {
 
     draw(context: CanvasRenderingContext2D, x: number, y: number) {}
     async doTurn() {}
+    async die() {}
 }

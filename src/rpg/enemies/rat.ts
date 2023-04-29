@@ -65,4 +65,8 @@ export class Rat extends BaseEnemy {
             return performNPCAction(this, action, [this.x, this.y]);
         }
     }
+
+    async die(){
+        currentCombat?.entities.splice(currentCombat?.entities.indexOf(this), 1);
+    }
 }

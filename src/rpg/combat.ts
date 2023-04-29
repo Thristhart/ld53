@@ -242,4 +242,7 @@ export function damageActor(from: Actor, target: Actor, damage: number) {
 
 export function damageEntity(from: Actor, target: BaseEntity & Actor, damage: number) {
     damageActor(from, target, damage);
+    if(target.hp <= 0){
+        target.die();
+    }
 }

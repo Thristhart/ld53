@@ -22,7 +22,7 @@ const runDown: Action<GridLocation> = {
     targetType: "grid",
     targeting: horizontalLine,
     async apply(targetSquares) {
-        damageEntitiesOnSquares(this, targetSquares, 5);
+        damageEntitiesOnSquares(this, targetSquares, 50);
     },
 };
 
@@ -35,7 +35,7 @@ const mailStorm: Action<GridLocation> = {
         return square(target, 1);
     },
     async apply(targetSquares) {
-        damageEntitiesOnSquares(this, targetSquares, 5);
+        damageEntitiesOnSquares(this, targetSquares, 50);
     },
 };
 
