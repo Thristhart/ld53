@@ -1,0 +1,43 @@
+#ui {
+    grid-area: game;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+
+    display: grid;
+    grid-template-areas:
+        "gameplay gameplay"
+        "gameplay gameplay"
+        "dialogue dialogue";
+
+    grid-template-rows: 1fr min-content;
+}
+#titleScreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 136, 0.164);
+}
+#logo {
+    font-size: calc(var(--dialogue-font-size) * 5);
+    background-image: url("../assets/logo.png");
+    width: 3em;
+    height: 3em;
+    background-size: 100%;
+}
+.title1,
+.title2 {
+    font-size: calc(var(--dialogue-font-size) * 5);
+    font-family: var(--dialogue-font-family);
+    font-weight: bolder;
+    color: white;
+    -webkit-text-stroke-color: black;
+    -webkit-text-stroke-width: 1px;
+}

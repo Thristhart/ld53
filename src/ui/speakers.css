@@ -1,0 +1,34 @@
+.speaker-portrait.cat {
+    background-image: url("../assets/cat_idle_blink_strip8.png");
+    background-size: 800%;
+    animation: eightFrameAnimation 1s step-start;
+    animation-delay: 300ms;
+}
+
+
+@keyframes eightFrameAnimation {
+    0.00% {
+        background-position-x: 0%;
+    }
+    12.50% {
+        background-position-x: 14.29%;
+    }
+    25.00% {
+        background-position-x: 28.57%;
+    }
+    37.50% {
+        background-position-x: 42.86%;
+    }
+    50.00% {
+        background-position-x: 57.14%;
+    }
+    62.50% {
+        background-position-x: 71.43%;
+    }
+    75.00% {
+        background-position-x: 85.71%;
+    }
+    87.50% {
+        background-position-x: 100%;
+    }
+}

@@ -1,8 +1,9 @@
-
 import { render } from "preact";
 import { useState } from "preact/hooks";
 import { shouldShowDialog } from "~/story";
 import { Dialogue } from "./Dialogue";
+import "./ui.css";
+import "./speakers.css";
 
 const uiContainer = document.getElementById("ui")!;
 
@@ -18,7 +19,7 @@ function UI() {
             <div id="titleScreen" onClick={() => setIsTitleScreen(false)}>
                 <span className="title1">CASSIE'S</span>
                 <div id="logo" />
-                <span className="title2">HAT</span>
+                <span className="title2">TRUCK</span>
             </div>
         );
     }
@@ -28,7 +29,7 @@ function UI() {
             {shouldShowDialog() && <Dialogue />}
         </>
     );
-};
+}
 
 export function renderUI() {
     render(<UI />, uiContainer);

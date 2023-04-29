@@ -1,0 +1,142 @@
+#dialogue {
+    grid-row: 1 / -1;
+    grid-column: 1 / -1;
+    font-family: var(--dialogue-font-family);
+    font-size: var(--dialogue-font-size);
+    margin-bottom: 2rem;
+    margin-left: 4rem;
+    margin-right: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: column;
+    position: relative;
+
+    z-index: 1;
+    animation: fadeIn 300ms ease-in;
+}
+
+#dialogue .message {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    width: 100%;
+    background-image: url("../assets/Panel_Dialogue_no_arrow.png");
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    aspect-ratio: 1443/238;
+
+    max-width: 100rem;
+
+    font-weight: bold;
+
+    box-sizing: border-box;
+
+    position: relative;
+
+    user-select: none;
+}
+.messageText {
+    display: flex;
+    position: absolute;
+
+    right: clamp(1rem, 2vw, 2rem);
+    left: clamp(1rem, 5vw, 5rem);
+    bottom: 3vw;
+    top: clamp(1rem, 4vw, 4rem);
+
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+
+    flex-wrap: wrap;
+}
+
+#dialogue .speaker {
+    position: absolute;
+    top: -0.3em;
+    left: clamp(0.8rem, 10vw, 10rem);
+    background-color: black;
+    color: white;
+    text-transform: uppercase;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: 0.1em;
+    padding-top: 0.1em;
+
+    animation: fadeIn 300ms linear forwards;
+}
+#dialogue .speaker.speakertag-right {
+    left: unset;
+    right: clamp(0.8rem, 10vw, 10rem);
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.speaker-portrait {
+    display: block;
+    width: 24em;
+    height: 24em;
+
+    position: absolute;
+    top: -18em;
+
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    z-index: -1;
+
+    background-position: 0 0;
+    background-repeat: no-repeat;
+}
+
+.left-speaker {
+    left: -2em;
+}
+.right-speaker {
+    transform: scaleX(-1);
+    right: -2em;
+}
+
+#dialogue .choices {
+    display: flex;
+    align-items: flex-start;
+    align-content: flex-start;
+    justify-content: center;
+
+    flex-direction: column;
+    list-style: none;
+
+    position: absolute;
+    bottom: 8em;
+    left: 12em;
+
+    z-index: 1;
+
+    font-size: var(--dialogue-font-size);
+}
+
+#dialogue .choice {
+    font-size: var(--dialogue-font-size);
+    font-family: var(--dialogue-font-family);
+    background-color: white;
+    outline: 2px solid white;
+    border: 2px solid black;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+}
+
+.hiddenCharacter {
+    visibility: hidden;
+}
+.addSpace:after {
+    content: "\00a0";
+}
