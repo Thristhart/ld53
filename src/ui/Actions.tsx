@@ -1,9 +1,9 @@
 import { Player } from "~/rpg/basePlayer";
 import "./Actions.css";
 import { signal, useSignal } from "@preact/signals";
-import { Action } from "~/rpg/action";
+import { Action, GridLocation } from "~/rpg/action";
 
-export const selectedAction = signal<Action | undefined>(undefined);
+export const selectedAction = signal<Action<Player> | Action<GridLocation> | undefined>(undefined);
 
 interface ActionProps {
     readonly player: Player;

@@ -3,7 +3,13 @@ import { loadImage } from "../loadImage";
 import ratSheetPath from "~/assets/rat-Sheet.png";
 import { BaseEnemy } from "./baseEnemy";
 import { GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH } from "../render";
-import { Action } from "../action";
+import { Action, GridLocation } from "../action";
+import { cardinalSquares, singleGridLocation, singlePlayer } from "../targetShapes";
+import { randomFromArray } from "~/util/randomFromArray";
+import { Player } from "../basePlayer";
+import { damagePlayer } from "../actionUtil";
+import { Actor } from "../actor";
+import { createEnemy, currentCombat, getActorAtLocation, performNPCAction, spawnEnemy } from "../combat";
 
 const ratSheet: SpriteSheet = {
     image: loadImage(ratSheetPath),
@@ -11,8 +17,32 @@ const ratSheet: SpriteSheet = {
     spriteHeight: 22,
 };
 
+const gnaw = {
+    id: "gnaw",
+    name: "Gnaw",
+    description: "Rat gnaws at <TARGET>",
+    targetType: "player",
+    targeting: singlePlayer,
+    async apply(this: Actor, targets: Player[]) {
+        damagePlayer(this, targets[0], 5);
+    },
+} as const;
+
+const screech = {
+    id: "screech",
+    name: "Screech",
+    description: "Rat screeches for backup",
+    targetType: "grid",
+    targeting: singleGridLocation,
+    async apply(this: Actor, targets: GridLocation[]) {
+        targets.forEach(([x, y]) => {
+            spawnEnemy({ type: "rat", x, y });
+        });
+    },
+} as const;
+
 export class Rat extends BaseEnemy {
-    actions: Action[] = [];
+    actions = [gnaw, screech] as const;
     displayName: string = "Rat";
     draw(context: CanvasRenderingContext2D) {
         drawSprite(
@@ -23,5 +53,16 @@ export class Rat extends BaseEnemy {
             [0, 0]
         );
         super.draw(context);
+    }
+    async doTurn(): Promise<void> {
+        const action = randomFromArray(this.actions);
+        if (action.id === "gnaw") {
+            return performNPCAction(this, action, randomFromArray(currentCombat!.players));
+        } else if (action.id === "screech") {
+            const validCardinalSquares = cardinalSquares([this.x, this.y]).filter(
+                (square) => !getActorAtLocation(square)
+            );
+            return performNPCAction(this, action, randomFromArray(validCardinalSquares));
+        }
     }
 }

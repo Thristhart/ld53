@@ -2,8 +2,8 @@ import { GridLocation } from "./action";
 import { Player } from "./basePlayer";
 import { currentCombat } from "./combat";
 
-export function verticalLine(target: Player | GridLocation): GridLocation[] {
-    if (target instanceof Player || !currentCombat) {
+export function verticalLine(target: GridLocation): GridLocation[] {
+    if (!currentCombat) {
         return [];
     }
     const [x] = target;
@@ -14,9 +14,8 @@ export function verticalLine(target: Player | GridLocation): GridLocation[] {
     return targets;
 }
 
-
-export function horizontalLine(target: Player | GridLocation): GridLocation[] {
-    if (target instanceof Player || !currentCombat) {
+export function horizontalLine(target: GridLocation): GridLocation[] {
+    if (!currentCombat) {
         return [];
     }
     const [_, y] = target;
@@ -27,8 +26,8 @@ export function horizontalLine(target: Player | GridLocation): GridLocation[] {
     return targets;
 }
 
-export function square(target: Player | GridLocation, size: number): GridLocation[] {
-    if (target instanceof Player || !currentCombat) {
+export function square(target: GridLocation, size: number): GridLocation[] {
+    if (!currentCombat) {
         return [];
     }
     const [x, y] = target;
@@ -39,4 +38,33 @@ export function square(target: Player | GridLocation, size: number): GridLocatio
         }
     }
     return targets;
+}
+
+export function singlePlayer(target: Player): [Player] {
+    return [target];
+}
+export function singleGridLocation(target: GridLocation): [GridLocation] {
+    return [target];
+}
+
+export function cardinalSquares(target: GridLocation): GridLocation[] {
+    if (!currentCombat) {
+        return [];
+    }
+
+    const cardinals: GridLocation[] = [];
+    const [x, y] = target;
+    if (x > 0) {
+        cardinals.push([x - 1, y]);
+    }
+    if (x < currentCombat.width - 1) {
+        cardinals.push([x + 1, y]);
+    }
+    if (y > 0) {
+        cardinals.push([x, y - 1]);
+    }
+    if (y < currentCombat.height - 1) {
+        cardinals.push([x, y + 1]);
+    }
+    return cardinals;
 }

@@ -1,9 +1,9 @@
-import { Action } from "./action";
+import { Action, GridLocation } from "./action";
 import { Actor } from "./actor";
 
 export abstract class Player implements Actor {
-    static actions: Action[] = [];
-    actions: Action[];
+    static actions: (Action<Player> | Action<GridLocation>)[] = [];
+    actions: (Action<Player> | Action<GridLocation>)[];
     hp = 50;
     displayName: string = "";
     constructor(level: number) {
@@ -11,4 +11,5 @@ export abstract class Player implements Actor {
     }
 
     draw(context: CanvasRenderingContext2D, x: number, y: number) {}
+    async doTurn() {}
 }

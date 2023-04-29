@@ -1,12 +1,16 @@
-import { Action } from "../action";
+import { Action, GridLocation } from "../action";
 import { Actor } from "../actor";
 import { BaseEntity } from "../baseEntity";
+import { Player } from "../basePlayer";
 import { currentCombat } from "../combat";
 import { GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH } from "../render";
 
-export class BaseEnemy extends BaseEntity implements Actor {
+export class BaseEnemy<ActionTypes = Action<Player> | Action<GridLocation>>
+    extends BaseEntity
+    implements Actor<ActionTypes>
+{
     hp = 50;
-    actions: Action[] = [];
+    actions: ReadonlyArray<ActionTypes> = [];
     displayName: string = "";
     draw(context: CanvasRenderingContext2D) {
         if (currentCombat?.currentTurn.value === this) {
@@ -19,4 +23,5 @@ export class BaseEnemy extends BaseEntity implements Actor {
             );
         }
     }
+    async doTurn() {}
 }
