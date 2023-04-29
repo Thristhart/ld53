@@ -4,6 +4,8 @@ import { shouldShowDialog } from "~/story";
 import { Dialogue } from "./Dialogue";
 import "./ui.css";
 import "./speakers.css";
+import { RPG } from "./RPG";
+import { shouldShowCombat } from "~/rpg/combat";
 
 const uiContainer = document.getElementById("ui")!;
 
@@ -25,7 +27,7 @@ function UI() {
     }
     return (
         <>
-            {/* <RPG /> */}
+            {shouldShowCombat() && <RPG />}
             {shouldShowDialog() && <Dialogue />}
         </>
     );
