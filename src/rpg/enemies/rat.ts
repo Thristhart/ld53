@@ -4,7 +4,7 @@ import ratSheetPath from "~/assets/rat-Sheet.png";
 import { BaseEnemy } from "./baseEnemy";
 import { GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH } from "../render";
 import { Action, GridLocation } from "../action";
-import { cardinalSquares, singleGridLocation, singlePlayer } from "../targetShapes";
+import { cardinalSquares, emptyCardinalSquares, singleGridLocation, singlePlayer } from "../targetShapes";
 import { randomFromArray } from "~/util/randomFromArray";
 import { Player } from "../basePlayer";
 import { damagePlayer } from "../actionUtil";
@@ -33,7 +33,7 @@ const screech = {
     name: "Screech",
     description: "Rat screeches for backup",
     targetType: "grid",
-    targeting: singleGridLocation,
+    targeting: emptyCardinalSquares,
     async apply(this: Actor, targets: GridLocation[]) {
         targets.forEach(([x, y]) => {
             spawnEnemy({ type: "rat", x, y });
@@ -62,7 +62,7 @@ export class Rat extends BaseEnemy {
             const validCardinalSquares = cardinalSquares([this.x, this.y]).filter(
                 (square) => !getActorAtLocation(square)
             );
-            return performNPCAction(this, action, randomFromArray(validCardinalSquares));
+            return performNPCAction(this, action, [this.x, this.y]);
         }
     }
 }

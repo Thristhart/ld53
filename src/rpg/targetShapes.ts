@@ -1,6 +1,6 @@
 import { GridLocation } from "./action";
 import { Player } from "./basePlayer";
-import { currentCombat } from "./combat";
+import { currentCombat, getActorAtLocation } from "./combat";
 
 export function verticalLine(target: GridLocation): GridLocation[] {
     if (!currentCombat) {
@@ -66,5 +66,12 @@ export function cardinalSquares(target: GridLocation): GridLocation[] {
     if (y < currentCombat.height - 1) {
         cardinals.push([x, y + 1]);
     }
+    return cardinals
+}
+
+export function emptyCardinalSquares(target: GridLocation): GridLocation[] {
+    const cardinals = cardinalSquares(target).filter(
+        (square) => !getActorAtLocation(square)
+    );
     return cardinals;
 }

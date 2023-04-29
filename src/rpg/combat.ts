@@ -214,7 +214,7 @@ export async function performCurrentPlayerAction(): Promise<void> {
     nextTurn();
 }
 
-export async function performNPCAction<TargetType extends Player | GridLocation>(
+export async function performNPCAction<TargetType extends Player | GridLocation >(
     actor: Actor,
     action: Action<TargetType>,
     target: TargetType
