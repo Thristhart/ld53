@@ -21,14 +21,8 @@ import { renderUI } from "./ui";
 
 function getSpeakerName(speaker: Speaker) {
     switch (speaker) {
-        case Speaker.Cat:
+        case "cat":
             return "Cassie";
-        case Speaker.Crow:
-            return "Wilfred";
-        case Speaker.Fox:
-            return "Pierre";
-        case Speaker.Dog:
-            return "Maxine";
         default:
             return speaker;
     }
@@ -84,18 +78,10 @@ interface SpeechConfig {
 }
 function getSpeechConfigForSpeaker(speaker: Speaker): SpeechConfig | null {
     switch (speaker) {
-        case Speaker.None:
+        case "none":
             return null;
-        case Speaker.Cat:
+        case "cat":
             return { baseRate: 0.9, sound: catSpeechSound };
-        case Speaker.Crow:
-            return { baseRate: 0.6, sound: basicSpeechSound };
-        case Speaker.Beholder:
-            return { baseRate: 0.2, sound: basicSpeechSound };
-        case Speaker.Fox:
-            return { baseRate: 0.7, sound: basicSpeechSound };
-        case Speaker.Dog:
-            return { baseRate: 0.4, sound: basicSpeechSound };
     }
 }
 
@@ -203,7 +189,7 @@ const DialogueMessage = ({ storyMessage }: DialogueMessageProps) => {
         <div className={cx("message", speaker, isNarration && "narration")}>
             <Speakers />
             {currentChoices && <DialogueChoices storyChoices={currentChoices} />}
-            {speaker !== Speaker.None && (
+            {speaker !== "none" && (
                 <span className={cx("speaker", speaker === currentSpeakers[1] && "speakertag-right")}>
                     {getSpeakerName(speaker)}
                 </span>

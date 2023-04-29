@@ -11,14 +11,7 @@ if (import.meta.env.DEV) {
     window.DEBUG_STORY = story;
 }
 
-export enum Speaker {
-    None = "none",
-    Crow = "crow",
-    Cat = "cat",
-    Beholder = "beholder",
-    Fox = "fox",
-    Dog = "dog",
-}
+export type Speaker = "none" | "cat";
 
 export interface StoryMessage {
     readonly type: "message";
@@ -44,7 +37,7 @@ const speakers: [Speaker?, Speaker?] = [];
 const SPEAKER_REGEX = /(\w+)(\$?):\s?(.*)/;
 
 function getSpeaker(text: string) {
-    let speaker: Speaker = Speaker.None;
+    let speaker: Speaker = "none";
     let isNarration = true;
 
     let message = text;
@@ -80,7 +73,7 @@ function parseCurrentText() {
         });
     }
     const currentSpeaker = getSpeaker(current);
-    if (currentSpeaker.speaker !== Speaker.None && !speakers.includes(currentSpeaker.speaker)) {
+    if (currentSpeaker.speaker !== "none" && !speakers.includes(currentSpeaker.speaker)) {
         if (speakers[0]) {
             speakers[1] = currentSpeaker.speaker;
         } else {
