@@ -160,8 +160,9 @@ export function load() {
     }
     const combat = story.variablesState.GetVariableWithName("combat");
     if (combat instanceof StringValue) {
-        if (combat.value !== "none") {
-            startCombat(combat.value as keyof typeof combats);
+        const combatName = combat.value as keyof typeof combats;
+        if (combatName !== "none") {
+            startCombat(combatName);
         }
     }
     renderUI();

@@ -1,4 +1,4 @@
-import { combatTime } from "./combat";
+import { combatTime, currentCombat } from "./combat";
 
 const camera = { x: 0, y: 0, scale: 1 };
 
@@ -45,7 +45,6 @@ function drawGrid(context: CanvasRenderingContext2D, width: number, height: numb
 function fitAreaOnScreen(canvas: HTMLCanvasElement, left: number, top: number, right: number, bottom: number) {
     const width = right - left;
     const height = bottom - top;
-    const smallestDimension = Math.min(width, height);
     const scale = Math.min(canvas.width / width, canvas.height / height);
 
     camera.x = left + width / 2;
@@ -57,14 +56,24 @@ export function drawCombat(canvas: HTMLCanvasElement, context: CanvasRenderingCo
     combatTime.value;
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    fitAreaOnScreen(canvas, 0, -64, 5 * GRID_SQUARE_WIDTH, 10 * GRID_SQUARE_HEIGHT + 64);
+    if (!currentCombat) {
+        return;
+    }
+
+    fitAreaOnScreen(
+        canvas,
+        0,
+        -64,
+        currentCombat.width * GRID_SQUARE_WIDTH,
+        currentCombat.height * GRID_SQUARE_HEIGHT + 64
+    );
 
     context.save();
     context.translate(canvas.width / 2 - camera.x * camera.scale, canvas.height / 2 - camera.y * camera.scale);
 
     context.scale(camera.scale, camera.scale);
 
-    drawGrid(context, 5, 10);
+    drawGrid(context, currentCombat.width, currentCombat.height);
 
     context.restore();
 }

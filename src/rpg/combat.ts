@@ -1,7 +1,12 @@
 import { signal } from "@preact/signals";
 import { renderUI } from "~/ui/ui";
+import { EnemyType } from "./enemies";
 
-interface Combat {}
+interface Combat {
+    gridWidth: number;
+    gridHeight: number;
+    enemies: Array<{ type: EnemyType; x: number; y: number }>;
+}
 
 function makeCombat(a: Combat) {
     return a;
@@ -9,11 +14,21 @@ function makeCombat(a: Combat) {
 
 export const combats = {
     none: undefined,
-    tutorial: makeCombat({}),
+    tutorial: makeCombat({
+        gridWidth: 5,
+        gridHeight: 5,
+        enemies: [],
+    }),
 } as const;
 
-let currentCombatName: keyof typeof combats | undefined;
-export let combatState: "won" | "lost" | "active";
+export let currentCombat: CurrentCombat | undefined;
+interface CurrentCombat {
+    name: keyof typeof combats;
+    width: number;
+    height: number;
+    entities: [];
+    state: "won" | "lost" | "active";
+}
 
 let lastTick = performance.now();
 export const combatTime = signal(0);
@@ -26,14 +41,19 @@ function updateGameTime(now: number) {
     updateCombatTimeAnimationFrame = requestAnimationFrame(updateGameTime);
 }
 
-export function startCombat(combatName: keyof typeof combats) {
-    currentCombatName = combatName;
-    combatState = "active";
+export function startCombat(combatName: Exclude<keyof typeof combats, "none">) {
+    currentCombat = {
+        name: combatName,
+        state: "active",
+        width: combats[combatName].gridWidth,
+        height: combats[combatName].gridHeight,
+        entities: [],
+    };
     updateCombatTimeAnimationFrame = requestAnimationFrame(updateGameTime);
 }
 
 export function endCombat() {
-    currentCombatName = undefined;
+    currentCombat = undefined;
     renderUI();
     if (updateCombatTimeAnimationFrame) {
         cancelAnimationFrame(updateCombatTimeAnimationFrame);
@@ -41,5 +61,5 @@ export function endCombat() {
 }
 
 export function shouldShowCombat() {
-    return currentCombatName !== undefined;
+    return currentCombat !== undefined;
 }
