@@ -160,6 +160,7 @@ export function nextTurn() {
         // Top of the round, sort of
         currentCombat.currentTurn.value = currentCombat.players[0];
         actorsWhoHaveActedThisRound.clear();
+        lastNPCLog.value = undefined;
         return;
     }
     currentCombat.currentTurn.value = entityTurns[startIndex + 1];
@@ -169,8 +170,8 @@ export function nextTurn() {
 const TURN_DELAY = 1000;
 
 async function doNPCTurn() {
-    await wait(TURN_DELAY + Math.random() * 400 - 200);
     await currentCombat?.currentTurn.value.doTurn();
+    await wait(TURN_DELAY + Math.random() * 400 - 200);
     nextTurn();
 }
 
@@ -214,7 +215,9 @@ export async function performCurrentPlayerAction(): Promise<void> {
     nextTurn();
 }
 
-export async function performNPCAction<TargetType extends Player | GridLocation >(
+export const lastNPCLog = signal<string | undefined>(undefined);
+
+export async function performNPCAction<TargetType extends Player | GridLocation>(
     actor: Actor,
     action: Action<TargetType>,
     target: TargetType
@@ -242,7 +245,7 @@ export function damageActor(from: Actor, target: Actor, damage: number) {
 
 export function damageEntity(from: Actor, target: BaseEntity & Actor, damage: number) {
     damageActor(from, target, damage);
-    if(target.hp <= 0){
+    if (target.hp <= 0) {
         target.die();
     }
 }

@@ -9,6 +9,7 @@ export class BaseEnemy<ActionTypes = Action<Player> | Action<GridLocation>>
     extends BaseEntity
     implements Actor<ActionTypes>
 {
+    maxHp = 50;
     hp = 50;
     actions: ReadonlyArray<ActionTypes> = [];
     displayName: string = "";
@@ -22,6 +23,14 @@ export class BaseEnemy<ActionTypes = Action<Player> | Action<GridLocation>>
                 GRID_SQUARE_HEIGHT
             );
         }
+        const hpBarSize = (GRID_SQUARE_WIDTH * 3) / 4;
+        context.fillStyle = "red";
+        context.fillRect(
+            this.x * GRID_SQUARE_WIDTH + GRID_SQUARE_WIDTH / 2 - hpBarSize / 2,
+            this.y * GRID_SQUARE_HEIGHT + GRID_SQUARE_HEIGHT / 8,
+            hpBarSize * (this.hp / this.maxHp),
+            2
+        );
     }
     async doTurn() {}
 

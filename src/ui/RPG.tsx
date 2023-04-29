@@ -3,7 +3,7 @@ import { Canvas } from "./Canvas";
 import "./RPG.css";
 import { useEffect, useRef } from "preact/hooks";
 import { useSignal } from "@preact/signals";
-import { currentActionTarget, currentCombat, performCurrentPlayerAction } from "~/rpg/combat";
+import { currentActionTarget, currentCombat, lastNPCLog, performCurrentPlayerAction } from "~/rpg/combat";
 import { Player } from "~/rpg/basePlayer";
 import { Actions, selectedAction } from "./Actions";
 
@@ -48,8 +48,10 @@ export function RPG() {
             </div>
             <section id="status">
                 <div className="statusText">
-                    {currentCombat?.currentTurn.value instanceof Player && (
-                        <Actions player={currentCombat?.currentTurn.value} />
+                    {currentCombat?.currentTurn.value instanceof Player ? (
+                        <Actions player={currentCombat.currentTurn.value} />
+                    ) : (
+                        lastNPCLog
                     )}
                 </div>
             </section>

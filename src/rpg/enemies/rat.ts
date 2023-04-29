@@ -9,7 +9,7 @@ import { randomFromArray } from "~/util/randomFromArray";
 import { Player } from "../basePlayer";
 import { damagePlayer } from "../actionUtil";
 import { Actor } from "../actor";
-import { createEnemy, currentCombat, getActorAtLocation, performNPCAction, spawnEnemy } from "../combat";
+import { createEnemy, currentCombat, getActorAtLocation, lastNPCLog, performNPCAction, spawnEnemy } from "../combat";
 
 const ratSheet: SpriteSheet = {
     image: loadImage(ratSheetPath),
@@ -24,6 +24,7 @@ const gnaw = {
     targetType: "player",
     targeting: singlePlayer,
     async apply(this: Actor, targets: Player[]) {
+        lastNPCLog.value = `Rat gnaws at ${targets[0].displayName}`;
         damagePlayer(this, targets[0], 5);
     },
 } as const;
@@ -35,6 +36,7 @@ const screech = {
     targetType: "grid",
     targeting: emptyCardinalSquares,
     async apply(this: Actor, targets: GridLocation[]) {
+        lastNPCLog.value = `Rat screeches for backup`;
         targets.forEach(([x, y]) => {
             spawnEnemy({ type: "rat", x, y });
         });
