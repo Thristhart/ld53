@@ -1,14 +1,20 @@
 import { signal } from "@preact/signals";
 import { renderUI } from "~/ui/ui";
 import { EnemyType } from "./enemies";
+import { BaseEntity } from "./baseEntity";
+import { Rat } from "./enemies/rat";
+import { Player } from "./basePlayer";
+import { Cassie } from "./players/cassie";
 
-interface Combat {
+interface CombatDescription {
     gridWidth: number;
     gridHeight: number;
     enemies: Array<{ type: EnemyType; x: number; y: number }>;
+    players: (typeof Player)[];
+    playerLevel: number;
 }
 
-function makeCombat(a: Combat) {
+function makeCombat(a: CombatDescription) {
     return a;
 }
 
@@ -17,7 +23,14 @@ export const combats = {
     tutorial: makeCombat({
         gridWidth: 5,
         gridHeight: 5,
-        enemies: [],
+        players: [Cassie, Cassie, Cassie, Cassie],
+        playerLevel: 1,
+        enemies: [
+            { type: "rat", x: 2, y: 2 },
+            { type: "rat", x: 1, y: 2 },
+            { type: "rat", x: 2, y: 3 },
+            { type: "rat", x: 3, y: 3 },
+        ],
     }),
 } as const;
 
@@ -26,7 +39,8 @@ interface CurrentCombat {
     name: keyof typeof combats;
     width: number;
     height: number;
-    entities: [];
+    players: Player[];
+    entities: BaseEntity[];
     state: "won" | "lost" | "active";
 }
 
@@ -42,18 +56,36 @@ function updateGameTime(now: number) {
 }
 
 export function startCombat(combatName: Exclude<keyof typeof combats, "none">) {
+    const combatDescription = combats[combatName];
     currentCombat = {
         name: combatName,
         state: "active",
-        width: combats[combatName].gridWidth,
-        height: combats[combatName].gridHeight,
-        entities: [],
+        width: combatDescription.gridWidth,
+        height: combatDescription.gridHeight,
+        players: combatDescription.players.map((PlayerClass) => {
+            return new (PlayerClass as unknown as new (playerLevel: number) => Player)(combatDescription.playerLevel);
+        }),
+        entities: combatDescription.enemies.map((enemyDesc) => {
+            if (enemyDesc.type === "rat") {
+                return new Rat(enemyDesc.x, enemyDesc.y);
+            }
+            throw "Unimplemented enemyType";
+        }),
     };
+    if (import.meta.env.DEV) {
+        //@ts-ignore
+        window.DEBUG_COMBAT = currentCombat;
+    }
+
     updateCombatTimeAnimationFrame = requestAnimationFrame(updateGameTime);
 }
 
 export function endCombat() {
     currentCombat = undefined;
+    if (import.meta.env.DEV) {
+        //@ts-ignore
+        window.DEBUG_COMBAT = currentCombat;
+    }
     renderUI();
     if (updateCombatTimeAnimationFrame) {
         cancelAnimationFrame(updateCombatTimeAnimationFrame);

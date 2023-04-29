@@ -30,3 +30,7 @@ export function RPG() {
         </div>
     );
 }
+
+if (import.meta.hot) {
+    import.meta.hot.accept();
+}
