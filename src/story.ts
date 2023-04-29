@@ -1,7 +1,6 @@
 import storyContent from "~/ink/main.ink";
 import { combats, endCombat, startCombat } from "~/rpg/combat";
 import { renderUI } from "~/ui/ui";
-import cx from "classnames";
 import { Story } from "inkjs/engine/Story";
 import { BoolValue, StringValue } from "inkjs/engine/Value";
 
@@ -132,9 +131,9 @@ export function setStoryBool(name: string, value: boolean) {
     story.variablesState.SetGlobal(name, new BoolValue(value));
 }
 
-function getDecoratorClass(name: string) {
-    return getStoryBool(name) && name;
-}
+// function getDecoratorClass(name: string) {
+//     return getStoryBool(name) && name;
+// }
 
 export const getStoryDecoratorsClassName = () => "";
 
