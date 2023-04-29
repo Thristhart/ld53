@@ -1,5 +1,6 @@
 import { Action, GridLocation } from "./action";
 import { Actor } from "./actor";
+import { currentCombat } from "./combat";
 
 export abstract class Player implements Actor {
     static actions: (Action<Player> | Action<GridLocation>)[] = [];
@@ -13,5 +14,8 @@ export abstract class Player implements Actor {
 
     draw(context: CanvasRenderingContext2D, x: number, y: number) {}
     async doTurn() {}
-    async die() {}
+    
+    async die(){
+        currentCombat?.players.splice(currentCombat?.players.indexOf(this), 1);
+    }
 }

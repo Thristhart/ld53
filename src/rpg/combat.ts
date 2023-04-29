@@ -241,11 +241,11 @@ export function getActorAtLocation(location: GridLocation): BaseEntity & Actor {
 
 export function damageActor(from: Actor, target: Actor, damage: number) {
     target.hp -= damage;
+    if (target.hp <= 0) {
+        target.die();
+    }
 }
 
 export function damageEntity(from: Actor, target: BaseEntity & Actor, damage: number) {
     damageActor(from, target, damage);
-    if (target.hp <= 0) {
-        target.die();
-    }
 }
