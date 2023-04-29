@@ -5,7 +5,7 @@ import { loadImage } from "../loadImage";
 import catSheetPath from "~/assets/cat_idle_blink_strip8.png";
 import { PLAYER_DRAW_HEIGHT, PLAYER_DRAW_WIDTH } from "../render";
 import { drawCenteredText } from "../drawCenteredText";
-import { square, verticalLine } from "../targetShapes";
+import { horizontalLine, square } from "../targetShapes";
 
 const catSheet: SpriteSheet = {
     image: loadImage(catSheetPath),
@@ -18,7 +18,7 @@ const runDown: Action = {
     name: "Run Down",
     description: "Cassie drives the truck in a vertical line, damaging enemies.",
     targetType: "grid",
-    targeting: verticalLine,
+    targeting: horizontalLine,
 };
 
 const mailStorm: Action = {

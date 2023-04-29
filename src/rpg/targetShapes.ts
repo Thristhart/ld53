@@ -14,6 +14,20 @@ export function verticalLine(target: Player | GridLocation): GridLocation[] {
     return targets;
 }
 
+
+export function horizontalLine(target: Player | GridLocation): GridLocation[] {
+    if (target instanceof Player || !currentCombat) {
+        return [];
+    }
+    const [_, y] = target;
+    console.log(y);
+    const targets: GridLocation[] = [];
+    for (let x = 0; x < currentCombat.width; x++) {
+        targets.push([x, y]);
+    }
+    return targets;
+}
+
 export function square(target: Player | GridLocation, size: number): GridLocation[] {
     if (target instanceof Player || !currentCombat) {
         return [];

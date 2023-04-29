@@ -6,6 +6,10 @@ Cassie (Postal Worker)
 
 ## Cassie
 
+25hp
+
+### Moves
+
 Run Down
 
 -   Full horizontal line damage (physical?)
