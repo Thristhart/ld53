@@ -12,6 +12,7 @@ import { BaseEnemy } from "./enemies/baseEnemy";
 import { Rat } from "./enemies/rat";
 import { Cassie } from "./players/cassie";
 import { Frog } from "./players/frog";
+import { Cop } from "./enemies/cop";
 
 interface EnemyDescription {
     type: EnemyType;
@@ -42,7 +43,7 @@ export const combats = {
     tutorial: makeCombat({
         gridWidth: 5,
         gridHeight: 5,
-        players: [Frog, Cassie],
+        players: [Cassie],
         playerLevel: 2,
         enemies: [
             { type: "rat", x: 1, y: 3 },
@@ -52,6 +53,17 @@ export const combats = {
             { type: "rat", x: 3, y: 3 },
         ],
         startingSide: StartingSide.player,
+    }),
+    cops: makeCombat({
+        gridWidth: 5,
+        gridHeight: 5,
+        players: [Cassie, Frog],
+        playerLevel: 3,
+        enemies: [
+            { type: "cop", x: 1, y: 3 },
+            { type: "cop", x: 2, y: 2 },
+        ],
+        startingSide: StartingSide.enemy,
     }),
 } as const;
 
@@ -81,6 +93,9 @@ export function createEnemy(enemyDesc: EnemyDescription) {
     if (enemyDesc.type === "rat") {
         return new Rat(enemyDesc.x, enemyDesc.y);
     }
+    if (enemyDesc.type === "cop") {
+        return new Cop(enemyDesc.x, enemyDesc.y);
+    }
     throw "Unimplemented enemyType";
 }
 
@@ -109,7 +124,9 @@ export function startCombat(combatName: Exclude<keyof typeof combats, "none">) {
         height: combatDescription.gridHeight,
         players,
         entities,
-        currentTurn: signal(players[0]),
+        currentTurn: signal(
+            combatDescription.startingSide === StartingSide.player ? players[0] : getSortedEntityTurns(entities)[0]
+        ),
     };
     if (import.meta.env.DEV) {
         //@ts-ignore
@@ -117,30 +134,17 @@ export function startCombat(combatName: Exclude<keyof typeof combats, "none">) {
     }
 
     updateCombatTimeAnimationFrame = requestAnimationFrame(updateGameTime);
+    if (combatDescription.startingSide === StartingSide.enemy) {
+        doNPCTurn();
+    }
 }
 
 const actorsWhoHaveActedThisRound = new Set<Actor>();
 
-export function nextTurn() {
-    if (!currentCombat) {
-        return;
-    }
-    actorsWhoHaveActedThisRound.add(currentCombat.currentTurn.value);
-    if (currentCombat.currentTurn.value instanceof Player) {
-        const playerIndex = currentCombat.players.indexOf(currentCombat.currentTurn.value);
-        if (playerIndex < currentCombat.players.length - 1) {
-            // this will fall apart if there's a way to go to previous player's turn... so don't do that
-            currentCombat.currentTurn.value = currentCombat.players[playerIndex + 1];
-            if (currentCombat.currentTurn.value instanceof Player) {
-                    currentCombat.currentTurn.value.decrementCooldown();
-            }
-            return;
-        }
-    }
-    const actorTurns = currentCombat.entities.filter(
-        (ent) => isActor(ent) && !actorsWhoHaveActedThisRound.has(ent)
-    ) as (BaseEntity & Actor)[];
-    const entityTurns = actorTurns.sort((a, b) => {
+function getSortedEntityTurns(entities: BaseEntity[]) {
+    const actorTurns = entities.filter((ent) => isActor(ent) && !actorsWhoHaveActedThisRound.has(ent)) as (BaseEntity &
+        Actor)[];
+    return actorTurns.sort((a, b) => {
         if (a.x < b.x) {
             return -1;
         }
@@ -155,6 +159,25 @@ export function nextTurn() {
         }
         return 0;
     });
+}
+
+export function nextTurn() {
+    if (!currentCombat) {
+        return;
+    }
+    actorsWhoHaveActedThisRound.add(currentCombat.currentTurn.value);
+    if (currentCombat.currentTurn.value instanceof Player) {
+        const playerIndex = currentCombat.players.indexOf(currentCombat.currentTurn.value);
+        if (playerIndex < currentCombat.players.length - 1) {
+            // this will fall apart if there's a way to go to previous player's turn... so don't do that
+            currentCombat.currentTurn.value = currentCombat.players[playerIndex + 1];
+            if (currentCombat.currentTurn.value instanceof Player) {
+                currentCombat.currentTurn.value.decrementCooldown();
+            }
+            return;
+        }
+    }
+    const entityTurns = getSortedEntityTurns(currentCombat.entities);
     let startIndex = -1;
     if (currentCombat.currentTurn.value instanceof BaseEnemy) {
         startIndex = entityTurns.indexOf(currentCombat.currentTurn.value);
@@ -162,6 +185,9 @@ export function nextTurn() {
     if (startIndex >= entityTurns.length - 1) {
         // Top of the round, sort of
         currentCombat.currentTurn.value = currentCombat.players[0];
+        if (currentCombat.currentTurn.value instanceof Player) {
+            currentCombat.currentTurn.value.decrementCooldown();
+        }
         actorsWhoHaveActedThisRound.clear();
         lastNPCLog.value = undefined;
         return;
