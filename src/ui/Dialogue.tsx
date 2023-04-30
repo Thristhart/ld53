@@ -22,6 +22,7 @@ import { renderUI } from "./ui";
 function getSpeakerName(speaker: Speaker) {
     switch (speaker) {
         case "cat":
+        case "cattruck":
             return "Cassie";
         default:
             return speaker;
@@ -81,7 +82,10 @@ function getSpeechConfigForSpeaker(speaker: Speaker): SpeechConfig | null {
         case "none":
             return null;
         case "cat":
+        case "cattruck":
             return { baseRate: 0.9, sound: catSpeechSound };
+        case "rat":
+            return { baseRate: 0.6, sound: basicSpeechSound };
     }
 }
 

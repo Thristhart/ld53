@@ -18,7 +18,7 @@ body {
 
     background-color: black;
 
-    background-image: url("./assets/forest.jpg");
+    background-image: url("./assets/park.jpg");
     background-size: cover;
     background-position: center;
 
@@ -26,7 +26,7 @@ body {
 }
 
 body[data-bg="forest"] {
-    background-image: url("./assets/forest.jpg");
+    background-image: url("./assets/park.jpg");
 }
 body[data-bg="road"] {
     background-image: url("./assets/road.jpg");

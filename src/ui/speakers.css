@@ -1,10 +1,54 @@
+/** preload */
+body:after {
+    content: "";
+    background-image: url("./assets/cat_idle_blink_strip8.png") url("./assets/cat_truck_full.png")
+        url("../assets/truck_full.png") url("../assets/rat-Sheet.png");
+}
+
 .speaker-portrait.cat {
     background-image: url("../assets/cat_idle_blink_strip8.png");
     background-size: 800%;
     animation: eightFrameAnimation 1s step-start;
     animation-delay: 300ms;
 }
+.speaker-portrait.cattruck {
+    background-image: url("../assets/cat_truck_full.png");
+    background-size: 80%;
+    background-position-y: 70%;
+}
+.speaker-portrait.truck {
+    background-image: url("../assets/truck_full.png");
+    background-size: 80%;
+    background-position-y: 70%;
+}
+.speaker-portrait.rat {
+    background-image: url("../assets/rat-Sheet.png");
+    background-size: 400%;
+    animation: fourFrameAnimation 1s step-start;
+    animation-delay: 300ms;
+    transform: scaleX(-1);
+    height: 10em;
+    top: -9em;
+    width: 16em;
+}
+.speaker-portrait.rat.right-speaker {
+    transform: unset;
+}
 
+@keyframes fourFrameAnimation {
+    0.00% {
+        background-position-x: 0%;
+    }
+    25.00% {
+        background-position-x: 33.33%;
+    }
+    50.00% {
+        background-position-x: 66.66%;
+    }
+    75.00% {
+        background-position-x: 100%;
+    }
+}
 
 @keyframes eightFrameAnimation {
     0.00% {
