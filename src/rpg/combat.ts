@@ -12,6 +12,7 @@ import { animate } from "./animate";
 import { wait } from "~/util/wait";
 import { Action, GridLocation } from "./action";
 import { showDialog } from "~/story";
+import { Frog } from "./players/frog";
 
 interface EnemyDescription {
     type: EnemyType;
@@ -42,7 +43,7 @@ export const combats = {
     tutorial: makeCombat({
         gridWidth: 5,
         gridHeight: 5,
-        players: [Cassie],
+        players: [Cassie, Frog],
         playerLevel: 2,
         enemies: [
             { type: "rat", x: 1, y: 3 },
