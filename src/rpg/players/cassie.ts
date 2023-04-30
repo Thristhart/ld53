@@ -1,13 +1,12 @@
+import catSheetPath from "~/assets/cat_idle_blink_strip8.png";
 import { Action, GridLocation } from "../action";
+import { damageEntitiesOnSquares } from "../actionUtil";
 import { Player } from "../basePlayer";
+import { drawCenteredText } from "../drawCenteredText";
 import { SpriteSheet, drawSprite } from "../drawSprite";
 import { loadImage } from "../loadImage";
-import catSheetPath from "~/assets/cat_idle_blink_strip8.png";
 import { PLAYER_DRAW_HEIGHT, PLAYER_DRAW_WIDTH } from "../render";
-import { drawCenteredText } from "../drawCenteredText";
 import { horizontalLine, square } from "../targetShapes";
-import { damageEntity, getActorAtLocation } from "../combat";
-import { damageEntitiesOnSquares } from "../actionUtil";
 
 const catSheet: SpriteSheet = {
     image: loadImage(catSheetPath),
