@@ -27,7 +27,7 @@ const gnaw = {
     targeting: singlePlayer,
     async apply(this: Actor, targets: Player[]) {
         lastNPCLog.value = `Rat gnaws at ${targets[0].displayName}`;
-        damagePlayer(this, targets[0], 5);
+        damagePlayer(this, targets[0], 1);
     },
     animation: {
         async animate(this: Actor, target: Player) {

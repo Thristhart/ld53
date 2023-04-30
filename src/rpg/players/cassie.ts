@@ -70,7 +70,7 @@ const mailStorm: Action<GridLocation> = {
     animation: {
         async animate(target: GridLocation) {
             mailStormParticles(target);
-            await wait(400);
+            await wait(800);
         },
     },
 };
