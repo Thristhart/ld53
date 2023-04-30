@@ -11,6 +11,7 @@ import { selectedAction } from "~/ui/Actions";
 import { animate } from "./animate";
 import { wait } from "~/util/wait";
 import { Action, GridLocation } from "./action";
+import { showDialog } from "~/story";
 
 interface EnemyDescription {
     type: EnemyType;
@@ -268,4 +269,13 @@ export function damageActor(from: Actor, target: Actor, damage: number) {
 
 export function damageEntity(from: Actor, target: BaseEntity & Actor, damage: number) {
     damageActor(from, target, damage);
+}
+
+if (import.meta.env.DEV) {
+    //@ts-ignore
+    window.DEBUG_SKIP_COMBAT = () => {
+        endCombat();
+        showDialog();
+        renderUI();
+    };
 }
