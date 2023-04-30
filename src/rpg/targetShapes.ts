@@ -47,6 +47,10 @@ export function singleGridLocation(target: GridLocation): [GridLocation] {
     return [target];
 }
 
+export function allPlayers(target: Player): Player[] {
+    return currentCombat?.players ?? [];
+}
+
 export function fullGrid(target: GridLocation): GridLocation[] {
     if (!currentCombat) {
         return [];

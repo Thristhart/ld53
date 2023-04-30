@@ -7,7 +7,7 @@ import { drawCenteredText } from "../drawCenteredText";
 import { PLAYER_DRAW_WIDTH, PLAYER_DRAW_HEIGHT, gridLocationToCenter } from "../render";
 import { combatTime, currentCombat, damageEntity, getActorAtLocation } from "../combat";
 import { Action, GridLocation } from "../action";
-import { fullGrid, singleGridLocation, singlePlayer } from "../targetShapes";
+import { allPlayers, fullGrid, singleGridLocation, singlePlayer } from "../targetShapes";
 import { drawBarrier } from "./drawBarrier";
 import { FrameAnimation, PositionAnimation, makeFrameAnimation, makeLerpAnimation } from "../animation";
 import { Actor } from "../actor";
@@ -29,11 +29,13 @@ const frogCroakSheet: SpriteSheet = {
 const makeshiftWall: Action<Player> = {
     id: "makeshiftWall",
     name: "Makeshift Wall",
-    description: "FROGNAME erects a barrier in front of the target player, preventing 5 damage.",
+    description: "FROGNAME erects a barrier in front of all players, preventing 5 damage.",
     targetType: "player",
-    targeting: singlePlayer,
+    targeting: allPlayers,
     async apply(targets) {
-        targets[0].barrier = 5;
+        for (const target of targets) {
+            target.barrier = 5;
+        }
     },
 };
 
@@ -76,7 +78,6 @@ const clearTheSite: Action<GridLocation> = {
                     distance * 150,
                     undefined,
                     () => {
-                        console.log(distance);
                         if (distance < 2) {
                             damageEntity(this, target, 2 - distance);
                         }

@@ -110,6 +110,15 @@ export const PLAYER_DRAW_HEIGHT = 200;
 
 function drawPlayers(context: CanvasRenderingContext2D, players: Player[]) {
     const startHeight = context.canvas.height / 2 - PLAYER_DRAW_HEIGHT * ((players.length - 1) / 2);
+    let targetedPlayers: Player[] = [];
+    if (
+        selectedAction.value &&
+        selectedAction.value.targetType === "player" &&
+        currentActionTarget.value &&
+        currentActionTarget.value instanceof Player
+    ) {
+        targetedPlayers = selectedAction.value.targeting(currentActionTarget.value);
+    }
     players.forEach((player, index) => {
         if (currentCombat?.currentTurn.value === player) {
             context.strokeStyle = "white";
@@ -120,12 +129,7 @@ function drawPlayers(context: CanvasRenderingContext2D, players: Player[]) {
                 PLAYER_DRAW_HEIGHT
             );
         }
-        if (
-            selectedAction.value &&
-            selectedAction.value.targetType === "player" &&
-            currentActionTarget.value &&
-            currentActionTarget.value === player
-        ) {
+        if (targetedPlayers.includes(player)) {
             context.fillStyle = "rgb(206 251 255 / 30%)";
             context.fillRect(
                 leftPadding / 2 - PLAYER_DRAW_WIDTH / 2,
