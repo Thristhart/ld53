@@ -5,6 +5,14 @@ export interface PositionAnimation {
     duration: number;
 }
 
+export interface FrameAnimation {
+    frames: ReadonlyArray<readonly [x: number, y: number]>;
+    currentIndex: number;
+    tick(time: number): void;
+    timePerFrame: number;
+    startTime: number;
+}
+
 export function makeLerpAnimation(
     startPos: readonly [x: number, y: number],
     endPos: readonly [x: number, y: number],
@@ -12,20 +20,41 @@ export function makeLerpAnimation(
     startTime: number = 0,
     onComplete?: () => void
 ): PositionAnimation {
-    return {
+    const animation = {
         startPos,
         currentPos: startPos,
         duration,
-        tick(time) {
+        tick(time: number) {
             const dt = time - startTime;
             if (dt > 0) {
-                this.currentPos = lerp(startPos, endPos, Math.min(dt / duration, 1));
+                animation.currentPos = lerp(startPos, endPos, Math.min(dt / duration, 1));
             }
             if (dt >= duration) {
                 onComplete?.();
             }
         },
     };
+    return animation;
+}
+
+export function makeFrameAnimation(
+    frames: ReadonlyArray<readonly [x: number, y: number]>,
+    timePerFrame: number,
+    startTime: number = 0
+): FrameAnimation {
+    const animation = {
+        frames,
+        currentIndex: 0,
+        timePerFrame,
+        startTime,
+        tick(time: number) {
+            const dt = time - startTime;
+            if (dt > 0) {
+                animation.currentIndex = Math.floor(dt / timePerFrame);
+            }
+        },
+    };
+    return animation;
 }
 
 function lerp(a: readonly [x: number, y: number], b: readonly [x: number, y: number], frac: number) {
