@@ -94,7 +94,4 @@ export class Rat extends BaseEnemy {
         }
     }
 
-    async die() {
-        currentCombat?.entities.splice(currentCombat?.entities.indexOf(this), 1);
-    }
 }

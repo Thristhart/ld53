@@ -2,7 +2,7 @@
 
 Cassie (Postal Worker)
 ??? (Construction Worker)
-??? (???)
+??? (Miner)
 ??? (Dad?)
 
 # Abilities
@@ -24,9 +24,15 @@ Mail Storm
 -   3 damage
 -   Do we diminish a supply?
 
+Quick Sort
+
+Send off
+
+-   Target enemy is removed from the battle for 3 turns.
+
 ## ??? CW
 
-40hp
+20 + 10\*level hp
 
 ### Moves
 
@@ -41,6 +47,14 @@ Clear the Site
 Steel Beams
 
 -   3 wide Horizontal/Vertical line for 9 damage.
+
+## ??? Miner
+
+12 + 8\*level hp
+
+### Moves
+
+Detonate
 
 # Enemy Types
 
@@ -66,7 +80,7 @@ Abilities: (Maybe some AI, I'll think on it)
 -   Rush Forward
     -   Move forward 3.
 
-## Pidgeon
+## Pigeon
 
 ## Clown
 

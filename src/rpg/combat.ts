@@ -126,12 +126,14 @@ export function nextTurn() {
         return;
     }
     actorsWhoHaveActedThisRound.add(currentCombat.currentTurn.value);
-    // TODO: skip if dead
     if (currentCombat.currentTurn.value instanceof Player) {
         const playerIndex = currentCombat.players.indexOf(currentCombat.currentTurn.value);
         if (playerIndex < currentCombat.players.length - 1) {
             // this will fall apart if there's a way to go to previous player's turn... so don't do that
             currentCombat.currentTurn.value = currentCombat.players[playerIndex + 1];
+            if (currentCombat.currentTurn.value instanceof Player) {
+                    currentCombat.currentTurn.value.decrementCooldown();
+            }
             return;
         }
     }

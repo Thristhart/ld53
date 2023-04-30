@@ -11,6 +11,7 @@ export abstract class Player implements Actor {
     maxHP = 50;
     barrier = 0;
     displayName: string = "";
+    cooldowns: Map<Action<Player | GridLocation>, number> = new Map<Action<Player | GridLocation>, number>();
     x: number = 0;
     y: number = 0;
     constructor(level: number) {
@@ -18,6 +19,9 @@ export abstract class Player implements Actor {
         this.actions = derivedPlayer.actions.slice(0, level);
         this.maxHP = derivedPlayer.baseHP + derivedPlayer.hpPerLevel * level;
         this.hp = this.maxHP;
+        this.actions.forEach(action => {
+            this.cooldowns.set(action as any, 0);
+        });
     }
 
     draw(context: CanvasRenderingContext2D, x: number, y: number) {}
@@ -25,5 +29,12 @@ export abstract class Player implements Actor {
 
     async die() {
         currentCombat?.players.splice(currentCombat?.players.indexOf(this), 1);
+    }
+
+    async decrementCooldown() {
+        for(const [key, value] of this.cooldowns.entries())
+        {  
+            this.cooldowns.set(key, value > 0 ? value-1: value);
+        };
     }
 }

@@ -42,5 +42,7 @@ export class BaseEnemy<ActionTypes = Action<Player> | Action<GridLocation>>
     }
     async doTurn() {}
 
-    async die() {}
+    async die() {
+        currentCombat?.entities.splice(currentCombat?.entities.indexOf(this), 1);
+    }
 }
