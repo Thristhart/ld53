@@ -119,6 +119,20 @@ function drawPlayers(context: CanvasRenderingContext2D, players: Player[]) {
                 PLAYER_DRAW_HEIGHT
             );
         }
+        if (
+            selectedAction.value &&
+            selectedAction.value.targetType === "player" &&
+            currentActionTarget.value &&
+            currentActionTarget.value === player
+        ) {
+            context.fillStyle = "rgb(206 251 255 / 30%)";
+            context.fillRect(
+                leftPadding / 2 - PLAYER_DRAW_WIDTH / 2,
+                index * PLAYER_DRAW_HEIGHT + startHeight - PLAYER_DRAW_HEIGHT / 2,
+                PLAYER_DRAW_WIDTH,
+                PLAYER_DRAW_HEIGHT
+            );
+        }
         player.x = leftPadding / 2;
         player.y = index * PLAYER_DRAW_HEIGHT + startHeight;
         player.draw(context, leftPadding / 2, index * PLAYER_DRAW_HEIGHT + startHeight);
@@ -160,6 +174,20 @@ export function mouseLocationToGridLocation(
         return undefined;
     }
     return [x, y];
+}
+
+export function getPlayerUnderMouse(canvas: HTMLCanvasElement, mouseX: number, mouseY: number) {
+    if (!currentCombat) {
+        return undefined;
+    }
+    const players = currentCombat.players;
+    const startHeight = canvas.height / 2 - PLAYER_DRAW_HEIGHT * ((players.length - 1) / 2);
+
+    if (mouseX > leftPadding) {
+        return undefined;
+    }
+    const index = Math.floor((mouseY - startHeight + PLAYER_DRAW_HEIGHT / 2) / PLAYER_DRAW_HEIGHT);
+    return players[index];
 }
 
 export function gridLocationToCanvas(gridX: number, gridY: number) {

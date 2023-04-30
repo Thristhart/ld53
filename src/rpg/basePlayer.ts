@@ -9,11 +9,12 @@ export abstract class Player implements Actor {
     static hpPerLevel = 0;
     hp = 50;
     maxHP = 50;
+    barrier = 0;
     displayName: string = "";
     x: number = 0;
     y: number = 0;
     constructor(level: number) {
-        const derivedPlayer = (this.constructor as typeof Player)
+        const derivedPlayer = this.constructor as typeof Player;
         this.actions = derivedPlayer.actions.slice(0, level);
         this.maxHP = derivedPlayer.baseHP + derivedPlayer.hpPerLevel * level;
         this.hp = this.maxHP;

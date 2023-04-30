@@ -1,4 +1,4 @@
-import { drawCombat, mouseLocationToGridLocation } from "~/rpg/render";
+import { drawCombat, getPlayerUnderMouse, mouseLocationToGridLocation } from "~/rpg/render";
 import { Canvas } from "./Canvas";
 import "./RPG.css";
 import { useEffect, useRef } from "preact/hooks";
@@ -81,6 +81,10 @@ export function RPG() {
                         const canvas = e.target as HTMLCanvasElement;
                         if (selectedAction.value && selectedAction.value.targetType === "grid") {
                             const location = mouseLocationToGridLocation(canvas, e.clientX, e.clientY);
+                            currentActionTarget.value = location;
+                        } else if (selectedAction.value && selectedAction.value.targetType === "player") {
+                            const location = getPlayerUnderMouse(canvas, e.clientX, e.clientY);
+                            console.log(location);
                             currentActionTarget.value = location;
                         }
                     }}

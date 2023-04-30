@@ -1,17 +1,16 @@
 import { Signal, signal } from "@preact/signals";
-import { renderUI } from "~/ui/ui";
-import { EnemyType } from "./enemies";
-import { BaseEntity } from "./baseEntity";
-import { Rat } from "./enemies/rat";
-import { Player } from "./basePlayer";
-import { Cassie } from "./players/cassie";
-import { Actor, isActor } from "./actor";
-import { BaseEnemy } from "./enemies/baseEnemy";
+import { showDialog } from "~/story";
 import { selectedAction } from "~/ui/Actions";
-import { animate } from "./animate";
+import { renderUI } from "~/ui/ui";
 import { wait } from "~/util/wait";
 import { Action, GridLocation } from "./action";
-import { showDialog } from "~/story";
+import { Actor, isActor } from "./actor";
+import { BaseEntity } from "./baseEntity";
+import { Player } from "./basePlayer";
+import { EnemyType } from "./enemies";
+import { BaseEnemy } from "./enemies/baseEnemy";
+import { Rat } from "./enemies/rat";
+import { Cassie } from "./players/cassie";
 import { Frog } from "./players/frog";
 
 interface EnemyDescription {
@@ -261,6 +260,11 @@ function checkVictoryOrDefeat() {
 }
 
 export function damageActor(from: Actor, target: Actor, damage: number) {
+    if (target instanceof Player) {
+        const barrierReduction = Math.min(target.barrier, damage);
+        damage -= barrierReduction;
+        target.barrier -= barrierReduction;
+    }
     target.hp -= damage;
     if (target.hp <= 0) {
         target.die();

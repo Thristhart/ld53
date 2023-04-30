@@ -19,6 +19,7 @@ import { currentCombat } from "../combat";
 import { mailStormParticles } from "../particles/mail";
 import { animate } from "../animate";
 import { wait } from "~/util/wait";
+import { drawBarrier } from "./drawBarrier";
 
 const catSheet: SpriteSheet = {
     image: loadImage(catSheetPath),
@@ -76,7 +77,6 @@ const mailStorm: Action<GridLocation> = {
 };
 
 export class Cassie extends Player {
-    
     displayName: string = "Cassie";
     static baseHP = 15;
     static hpPerLevel = 5;
@@ -97,5 +97,9 @@ export class Cassie extends Player {
         context.font = "22px Montserrat";
         drawCenteredText(context, "CASSIE", x, y - PLAYER_DRAW_HEIGHT / 2 + 32, "black", "white");
         drawCenteredText(context, `HP: ${this.hp}`, x, y + 80, "black", "white");
+
+        if (this.barrier) {
+            drawBarrier(context, x + PLAYER_DRAW_WIDTH / 2, y - 64, this.barrier);
+        }
     }
 }
