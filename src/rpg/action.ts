@@ -11,6 +11,11 @@ export interface Action<TargetType extends Player | GridLocation> {
         animate: (this: Actor, target: TargetType, targets: TargetType[]) => Promise<void>;
     };
     targetType: TargetType extends Player ? "player" : "grid";
-    targeting: (target: TargetType) => Array<TargetType>;
-    apply: (this: Actor<Action<TargetType>>, targets: Array<TargetType>) => Promise<void>;
+    targeting: (target: TargetType, targetOption: string | undefined) => Array<TargetType>;
+    targetOptions?: ReadonlyArray<string>;
+    apply: (
+        this: Actor<Action<TargetType>>,
+        targets: Array<TargetType>,
+        targetOption: string | undefined
+    ) => Promise<void>;
 }

@@ -1,6 +1,6 @@
 import { Signal, signal } from "@preact/signals";
 import { showDialog } from "~/story";
-import { selectedAction } from "~/ui/Actions";
+import { selectedAction, selectedActionOption } from "~/ui/Actions";
 import { renderUI } from "~/ui/ui";
 import { wait } from "~/util/wait";
 import { Action, GridLocation } from "./action";
@@ -42,7 +42,7 @@ export const combats = {
     tutorial: makeCombat({
         gridWidth: 5,
         gridHeight: 5,
-        players: [Cassie, Frog],
+        players: [Frog, Cassie],
         playerLevel: 2,
         enemies: [
             { type: "rat", x: 1, y: 3 },
@@ -211,7 +211,7 @@ export async function performCurrentPlayerAction(): Promise<void> {
         return;
     }
     const action = selectedAction.value;
-    const targets = action.targeting(currentActionTarget.value as Player & GridLocation);
+    const targets = action.targeting(currentActionTarget.value as Player & GridLocation, selectedActionOption.value);
     if (targets.length === 0) {
         return;
     }
@@ -236,7 +236,7 @@ export async function performNPCAction<TargetType extends Player | GridLocation>
     if (!currentCombat) {
         return;
     }
-    const targets = action.targeting(target);
+    const targets = action.targeting(target, selectedActionOption.value);
     if (action.animation) {
         await action.animation.animate.call(actor, target, targets);
     }

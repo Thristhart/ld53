@@ -7,12 +7,20 @@ import { drawCenteredText } from "../drawCenteredText";
 import { PLAYER_DRAW_WIDTH, PLAYER_DRAW_HEIGHT, gridLocationToCenter } from "../render";
 import { combatTime, currentCombat, damageEntity, getActorAtLocation } from "../combat";
 import { Action, GridLocation } from "../action";
-import { allPlayers, fullGrid, singleGridLocation, singlePlayer } from "../targetShapes";
+import {
+    allPlayers,
+    fullGrid,
+    horizontalLineWithLength,
+    singleGridLocation,
+    singlePlayer,
+    verticalLineWithLength,
+} from "../targetShapes";
 import { drawBarrier } from "./drawBarrier";
 import { FrameAnimation, PositionAnimation, makeFrameAnimation, makeLerpAnimation } from "../animation";
 import { Actor } from "../actor";
 import { animate } from "../animate";
 import { BaseEntity } from "../baseEntity";
+import { damageEntitiesOnSquares } from "../actionUtil";
 
 const frogSheet: SpriteSheet = {
     image: loadImage(frogSheetPath),
@@ -119,11 +127,31 @@ const clearTheSite: Action<GridLocation> = {
     },
 };
 
+const steelBeams: Action<GridLocation> = {
+    id: "steelBeams",
+    name: "Steel Beams",
+    description: "FROGNAME drops steel beams on the target, dealing damage.",
+    targetType: "grid",
+    targeting(target, targetOption) {
+        if (targetOption === "Vertical") {
+            return verticalLineWithLength(target, 3);
+        } else if (targetOption === "Horizontal") {
+            return horizontalLineWithLength(target, 3);
+        }
+        return [];
+    },
+    targetOptions: ["Vertical", "Horizontal"],
+    async apply(targetSquares, targetOption) {
+        damageEntitiesOnSquares(this, targetSquares, 9);
+    },
+    // TODO: animate steel beam
+};
+
 export class Frog extends Player {
     displayName: string = "Frog";
     static baseHP = 15;
     static hpPerLevel = 5;
-    static actions = [makeshiftWall, clearTheSite];
+    static actions = [steelBeams, makeshiftWall, clearTheSite];
     sheet: SpriteSheet | undefined;
     frameAnimation: FrameAnimation | undefined;
     draw(context: CanvasRenderingContext2D, x: number, y: number): void {

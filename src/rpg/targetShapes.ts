@@ -26,6 +26,32 @@ export function horizontalLine(target: GridLocation): GridLocation[] {
     return targets;
 }
 
+export function verticalLineWithLength(target: GridLocation, length: number): GridLocation[] {
+    if (!currentCombat) {
+        return [];
+    }
+    const [x, targetY] = target;
+    const targets: GridLocation[] = [];
+    const leftover = (length - 1) / 2;
+    for (let y = Math.max(targetY - leftover, 0); y < Math.min(targetY + 1 + leftover, currentCombat.height); y++) {
+        targets.push([x, y]);
+    }
+    return targets;
+}
+
+export function horizontalLineWithLength(target: GridLocation, length: number): GridLocation[] {
+    if (!currentCombat) {
+        return [];
+    }
+    const [targetX, y] = target;
+    const targets: GridLocation[] = [];
+    const leftover = (length - 1) / 2;
+    for (let x = Math.max(targetX - leftover, 0); x < Math.min(targetX + 1 + leftover, currentCombat.width); x++) {
+        targets.push([x, y]);
+    }
+    return targets;
+}
+
 export function square(target: GridLocation, size: number): GridLocation[] {
     if (!currentCombat) {
         return [];

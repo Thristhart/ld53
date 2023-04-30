@@ -1,4 +1,4 @@
-import { selectedAction } from "~/ui/Actions";
+import { selectedAction, selectedActionOption } from "~/ui/Actions";
 import { Player } from "./basePlayer";
 import { combatTime, currentActionTarget, currentCombat } from "./combat";
 import { GridLocation } from "./action";
@@ -37,7 +37,7 @@ function drawGrid(context: CanvasRenderingContext2D, width: number, height: numb
         currentActionTarget.value &&
         !(currentActionTarget.value instanceof Player)
     ) {
-        const targets = selectedAction.value.targeting(currentActionTarget.value);
+        const targets = selectedAction.value.targeting(currentActionTarget.value, selectedActionOption.value);
         for (const target of targets) {
             if (!(target instanceof Player)) {
                 const [x, y] = target;
@@ -117,7 +117,7 @@ function drawPlayers(context: CanvasRenderingContext2D, players: Player[]) {
         currentActionTarget.value &&
         currentActionTarget.value instanceof Player
     ) {
-        targetedPlayers = selectedAction.value.targeting(currentActionTarget.value);
+        targetedPlayers = selectedAction.value.targeting(currentActionTarget.value, selectedActionOption.value);
     }
     players.forEach((player, index) => {
         if (currentCombat?.currentTurn.value === player) {
