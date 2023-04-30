@@ -16,6 +16,9 @@ import {
 import { horizontalLine, square } from "../targetShapes";
 import { PositionAnimation, makeLerpAnimation } from "../animation";
 import { currentCombat } from "../combat";
+import { mailStormParticles } from "../particles/mail";
+import { animate } from "../animate";
+import { wait } from "~/util/wait";
 
 const catSheet: SpriteSheet = {
     image: loadImage(catSheetPath),
@@ -33,23 +36,22 @@ const runDown: Action<GridLocation> = {
         damageEntitiesOnSquares(this, targetSquares, 50);
     },
     animation: {
-        duration: 1200,
-        animate(targetSquares: GridLocation[], dt) {
+        async animate(_baseTarget: GridLocation, targetSquares: GridLocation[]) {
             const cassie = this as Cassie;
-            if (!cassie.positionAnimation) {
-                const target = gridLocationToCanvas(targetSquares[0][0], targetSquares[0][1]);
-                const left = [target[0], target[1] + (GRID_SQUARE_HEIGHT / 2) * camera.scale] as const;
-                const right = [
-                    target[0] + GRID_SQUARE_WIDTH * (currentCombat!.width + 1) * camera.scale,
-                    target[1] + (GRID_SQUARE_HEIGHT / 2) * camera.scale,
-                ] as const;
-                cassie.positionAnimation = makeLerpAnimation([cassie.x, cassie.y], left, 400, 0, () => {
-                    cassie.positionAnimation = makeLerpAnimation(left, right, 800, 400, () => {
-                        cassie.positionAnimation = undefined;
-                    });
+            const target = gridLocationToCanvas(targetSquares[0][0], targetSquares[0][1]);
+            const left = [target[0], target[1] + (GRID_SQUARE_HEIGHT / 2) * camera.scale] as const;
+            const right = [
+                target[0] + GRID_SQUARE_WIDTH * (currentCombat!.width + 1) * camera.scale,
+                target[1] + (GRID_SQUARE_HEIGHT / 2) * camera.scale,
+            ] as const;
+            cassie.positionAnimation = makeLerpAnimation([cassie.x, cassie.y], left, 400, 0, () => {
+                cassie.positionAnimation = makeLerpAnimation(left, right, 800, 400, () => {
+                    cassie.positionAnimation = undefined;
                 });
-            }
-            cassie.positionAnimation.tick(dt);
+            });
+            return animate((dt) => {
+                cassie.positionAnimation?.tick(dt);
+            }, 1200);
         },
     },
 };
@@ -64,6 +66,12 @@ const mailStorm: Action<GridLocation> = {
     },
     async apply(targetSquares) {
         damageEntitiesOnSquares(this, targetSquares, 50);
+    },
+    animation: {
+        async animate(target: GridLocation) {
+            mailStormParticles(target);
+            await wait(400);
+        },
     },
 };
 

@@ -164,14 +164,45 @@ export function mouseLocationToGridLocation(
 
 export function gridLocationToCanvas(gridX: number, gridY: number) {
     return [
-        g_canvas.width / 2 - camera.x * camera.scale + gridX * camera.scale * GRID_SQUARE_WIDTH + leftPadding,
+        g_canvas.width / 2 - camera.x * camera.scale + gridX * camera.scale * GRID_SQUARE_WIDTH + leftPadding / 2,
         g_canvas.height / 2 - camera.y * camera.scale + gridY * camera.scale * GRID_SQUARE_HEIGHT,
     ] as const;
 }
 
+interface Particle {
+    x: number;
+    y: number;
+    velocityX: number;
+    velocityY: number;
+    lifetime: number;
+    draw(context: CanvasRenderingContext2D, dt: number): void;
+}
+
+const particles = new Set<Particle>();
+
+function drawParticles(context: CanvasRenderingContext2D, dt: number) {
+    for (const particle of particles) {
+        particle.lifetime -= dt;
+        if (particle.lifetime <= 0) {
+            particles.delete(particle);
+        }
+        particle.x += particle.velocityX * (dt / 16);
+        particle.y += particle.velocityY * (dt / 16);
+        particle.draw(context, dt);
+    }
+}
+
+export function addParticle(particle: Particle) {
+    particles.add(particle);
+    return particle;
+}
+
 // ugh
 let g_canvas: HTMLCanvasElement;
+let lastTick = 0;
 export function drawCombat(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
+    const dt = combatTime.value - lastTick;
+    lastTick = combatTime.value;
     g_canvas = canvas;
     context.imageSmoothingEnabled = false;
     combatTime.value;
@@ -205,6 +236,8 @@ export function drawCombat(canvas: HTMLCanvasElement, context: CanvasRenderingCo
     context.restore();
 
     drawPlayers(context, currentCombat.players);
+
+    drawParticles(context, dt);
 }
 
 if (import.meta.env.DEV) {

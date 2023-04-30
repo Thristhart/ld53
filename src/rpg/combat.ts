@@ -208,8 +208,7 @@ export async function performCurrentPlayerAction(): Promise<void> {
     }
     if (action.animation) {
         // @ts-ignore
-        const anim = action.animation.animate.bind(currentCombat.currentTurn.value, targets);
-        await animate(anim, action.animation.duration);
+        await action.animation.animate.call(currentCombat.currentTurn.value, currentActionTarget.value, targets);
     }
     // @ts-ignore fuck it
     action.apply.call(currentCombat.currentTurn.value, targets);
@@ -230,7 +229,7 @@ export async function performNPCAction<TargetType extends Player | GridLocation>
     }
     const targets = action.targeting(target);
     if (action.animation) {
-        await animate(action.animation.animate.bind(actor, targets), action.animation.duration);
+        await action.animation.animate.call(actor, target, targets);
     }
     // @ts-ignore fuck it
     return action.apply.call(actor, targets);

@@ -8,8 +8,7 @@ export interface Action<TargetType extends Player | GridLocation> {
     name: string;
     description: string;
     animation?: {
-        duration: number;
-        animate: (this: Actor, targets: TargetType[], dt: number) => void;
+        animate: (this: Actor, target: TargetType, targets: TargetType[]) => Promise<void>;
     };
     targetType: TargetType extends Player ? "player" : "grid";
     targeting: (target: TargetType) => Array<TargetType>;
