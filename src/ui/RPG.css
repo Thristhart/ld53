@@ -58,3 +58,38 @@
     margin-top: 0;
     margin-bottom: 1rem;
 }
+
+.victoryOverlay {
+    color: green;
+}
+.defeatOverlay {
+    color: red;
+}
+.retry {
+    display: block;
+    margin-top: 1.2em;
+    font-size: 0.6em;
+}
+.victoryOverlay,
+.defeatOverlay {
+    font-family: var(--ui-font-family);
+    font-size: calc(var(--dialogue-font-size) * 3);
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    /* gross */
+    z-index: 1001;
+
+    background-color: rgba(0, 0, 0, 0.6);
+
+    animation: fadeIn 300ms ease-in;
+}

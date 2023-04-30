@@ -3,9 +3,46 @@ import { Canvas } from "./Canvas";
 import "./RPG.css";
 import { useEffect, useRef } from "preact/hooks";
 import { useSignal } from "@preact/signals";
-import { currentActionTarget, currentCombat, lastNPCLog, performCurrentPlayerAction } from "~/rpg/combat";
+import {
+    currentActionTarget,
+    currentCombat,
+    endCombat,
+    lastNPCLog,
+    performCurrentPlayerAction,
+    restartCombat,
+} from "~/rpg/combat";
 import { Player } from "~/rpg/basePlayer";
 import { Actions, selectedAction } from "./Actions";
+import { showDialog } from "~/story";
+import { renderUI } from "./ui";
+
+const VictoryOverlay = () => {
+    return (
+        <div
+            className="victoryOverlay"
+            onClick={() => {
+                endCombat();
+                showDialog();
+                renderUI();
+            }}>
+            VICTORY
+        </div>
+    );
+};
+
+const DefeatOverlay = () => {
+    return (
+        <div
+            className="defeatOverlay"
+            onClick={() => {
+                restartCombat();
+                renderUI();
+            }}>
+            DEFEAT
+            <span className="retry">RETRY?</span>
+        </div>
+    );
+};
 
 export function RPG() {
     const size = useSignal<[number, number]>([640, 480]);
@@ -26,6 +63,12 @@ export function RPG() {
         resizeObserver.observe(ref.current);
         return () => resizeObserver.disconnect();
     }, []);
+
+    if (currentCombat?.state.value === "lost") {
+        return <DefeatOverlay />;
+    } else if (currentCombat?.state.value === "won") {
+        return <VictoryOverlay />;
+    }
 
     return (
         <div id="rpg">

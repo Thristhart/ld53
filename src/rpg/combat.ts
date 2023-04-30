@@ -56,12 +56,12 @@ export const combats = {
 
 export let currentCombat: CurrentCombat | undefined;
 interface CurrentCombat {
-    name: keyof typeof combats;
+    name: Exclude<keyof typeof combats, "none">;
     width: number;
     height: number;
     players: Player[];
     entities: BaseEntity[];
-    state: "won" | "lost" | "active";
+    state: Signal<"won" | "lost" | "active">;
     currentTurn: Signal<Actor>;
 }
 
@@ -103,7 +103,7 @@ export function startCombat(combatName: Exclude<keyof typeof combats, "none">) {
     const entities = combatDescription.enemies.map(createEnemy);
     currentCombat = {
         name: combatName,
-        state: "active",
+        state: signal("active"),
         width: combatDescription.gridWidth,
         height: combatDescription.gridHeight,
         players,
@@ -188,6 +188,12 @@ export function endCombat() {
     }
 }
 
+export function restartCombat() {
+    let combatToRestart = currentCombat!.name;
+    endCombat();
+    startCombat(combatToRestart);
+}
+
 export function shouldShowCombat() {
     return currentCombat !== undefined;
 }
@@ -241,11 +247,23 @@ export function getActorAtLocation(location: GridLocation): BaseEntity & Actor {
     ) as BaseEntity & Actor;
 }
 
+function checkVictoryOrDefeat() {
+    if (!currentCombat) {
+        return;
+    }
+    if (currentCombat.players.length === 0) {
+        currentCombat.state.value = "lost";
+    } else if (currentCombat.entities.filter((ent) => ent instanceof BaseEnemy).length === 0) {
+        currentCombat.state.value = "won";
+    }
+}
+
 export function damageActor(from: Actor, target: Actor, damage: number) {
     target.hp -= damage;
     if (target.hp <= 0) {
         target.die();
     }
+    checkVictoryOrDefeat();
 }
 
 export function damageEntity(from: Actor, target: BaseEntity & Actor, damage: number) {
