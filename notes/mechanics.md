@@ -2,8 +2,7 @@
 
 Cassie (Postal Worker)
 ??? (Construction Worker)
-??? (Miner)
-??? (Dad?)
+Kiryu (Dad?)
 
 # Abilities
 
@@ -24,7 +23,7 @@ Mail Storm
 -   3 damage
 -   Do we diminish a supply?
 
-Quick Sort
+Quick Sort?
 
 Send off
 
@@ -48,13 +47,27 @@ Steel Beams
 
 -   3 wide Horizontal/Vertical line for 9 damage.
 
-## ??? Miner
+## Kiryu (Dad)
 
-12 + 8\*level hp
+22 + 11\*level hp
 
 ### Moves
 
-Detonate
+Suplex
+
+-   7 damage, Moves enemy forward 1, if they hit another enemy, each takes 7 damage.
+
+Throw a Bike
+
+-   10 damage, 2 rows, stops on the column with the second target. (Good luck)
+
+Reversal
+
+-   Next attack that hits selected player target, deal 2x damage to the attacker.
+
+Heat Finisher
+
+-   Does some unspeakable things to the enemies limbs, 30 damage, 2 turn cooldown. Starts on CD.
 
 # Enemy Types
 
@@ -68,19 +81,17 @@ Abilities: (Pick 1 per turn, random)
 -   Screech
     -   Call in new rats in orthogonally adjacent spaces. (Possibly random chance of success for each square? Depends on balance.)
 
-## Cop
+## Pidgeon Cop
 
-38 hp
+28 hp
 Abilities: (Maybe some AI, I'll think on it)
 
 -   Shoot
-    -   Deal damage to a target = 10 - Distance from front
+    -   Deal damage to a target = 9 - Distance from front
 -   Handcuffs (Cast when undamaged)
     -   Block an ability for a PCs next turn.
 -   Rush Forward
     -   Move forward 3.
-
-## Pigeon
 
 ## Clown
 
@@ -92,7 +103,7 @@ Vibes from Across the Obelisk bunnies/Pokemon hordes, test of multi-targeting co
 
 ## A Speeding Violation
 
-Fight two beefy cops.
+Fight four beefy pidgeon cops.
 
 ## The Delivery
 
