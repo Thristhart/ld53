@@ -1,0 +1,9 @@
+so once the file gets to
+
+3:08:80
+
+it should loop back to
+
+0:03:20
+
+which is right after the first two measures of kick drums at the start
