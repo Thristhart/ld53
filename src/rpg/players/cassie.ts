@@ -76,7 +76,10 @@ const mailStorm: Action<GridLocation> = {
 };
 
 export class Cassie extends Player {
+    
     displayName: string = "Cassie";
+    static baseHP = 15;
+    static hpPerLevel = 5;
     static actions = [runDown, mailStorm];
     positionAnimation: PositionAnimation | undefined;
     draw(context: CanvasRenderingContext2D, x: number, y: number): void {

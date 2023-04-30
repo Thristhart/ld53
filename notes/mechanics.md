@@ -9,7 +9,7 @@ Cassie (Postal Worker)
 
 ## Cassie
 
-25hp
+15 + 5\*level hp
 
 ### Moves
 
@@ -25,6 +25,10 @@ Mail Storm
 -   Do we diminish a supply?
 
 ## ??? CW
+
+40hp
+
+### Moves
 
 Makeshift Wall
 

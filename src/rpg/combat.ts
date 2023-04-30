@@ -42,7 +42,7 @@ export const combats = {
         gridWidth: 5,
         gridHeight: 5,
         players: [Cassie],
-        playerLevel: 4,
+        playerLevel: 2,
         enemies: [
             { type: "rat", x: 1, y: 3 },
             { type: "rat", x: 2, y: 2 },
