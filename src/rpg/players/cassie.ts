@@ -1,17 +1,26 @@
-import catSheetPath from "~/assets/cat_idle_blink_strip8.png";
+import catSheetPath from "~/assets/cat_truck.png";
 import { Action, GridLocation } from "../action";
 import { damageEntitiesOnSquares } from "../actionUtil";
 import { Player } from "../basePlayer";
 import { drawCenteredText } from "../drawCenteredText";
 import { SpriteSheet, drawSprite } from "../drawSprite";
 import { loadImage } from "../loadImage";
-import { PLAYER_DRAW_HEIGHT, PLAYER_DRAW_WIDTH } from "../render";
+import {
+    GRID_SQUARE_HEIGHT,
+    GRID_SQUARE_WIDTH,
+    PLAYER_DRAW_HEIGHT,
+    PLAYER_DRAW_WIDTH,
+    camera,
+    gridLocationToCanvas,
+} from "../render";
 import { horizontalLine, square } from "../targetShapes";
+import { PositionAnimation, makeLerpAnimation } from "../animation";
+import { currentCombat } from "../combat";
 
 const catSheet: SpriteSheet = {
     image: loadImage(catSheetPath),
-    spriteWidth: 40,
-    spriteHeight: 40,
+    spriteWidth: 96,
+    spriteHeight: 47,
 };
 
 const runDown: Action<GridLocation> = {
@@ -22,6 +31,26 @@ const runDown: Action<GridLocation> = {
     targeting: horizontalLine,
     async apply(targetSquares) {
         damageEntitiesOnSquares(this, targetSquares, 50);
+    },
+    animation: {
+        duration: 1200,
+        animate(targetSquares: GridLocation[], dt) {
+            const cassie = this as Cassie;
+            if (!cassie.positionAnimation) {
+                const target = gridLocationToCanvas(targetSquares[0][0], targetSquares[0][1]);
+                const left = [target[0], target[1] + (GRID_SQUARE_HEIGHT / 2) * camera.scale] as const;
+                const right = [
+                    target[0] + GRID_SQUARE_WIDTH * (currentCombat!.width + 1) * camera.scale,
+                    target[1] + (GRID_SQUARE_HEIGHT / 2) * camera.scale,
+                ] as const;
+                cassie.positionAnimation = makeLerpAnimation([cassie.x, cassie.y], left, 400, 0, () => {
+                    cassie.positionAnimation = makeLerpAnimation(left, right, 800, 400, () => {
+                        cassie.positionAnimation = undefined;
+                    });
+                });
+            }
+            cassie.positionAnimation.tick(dt);
+        },
     },
 };
 
@@ -40,14 +69,22 @@ const mailStorm: Action<GridLocation> = {
 
 export class Cassie extends Player {
     displayName: string = "Cassie";
-    static actions = [runDown, mailStorm, runDown, mailStorm];
+    static actions = [runDown, mailStorm];
+    positionAnimation: PositionAnimation | undefined;
     draw(context: CanvasRenderingContext2D, x: number, y: number): void {
-        drawSprite(context, catSheet, x, y, [0, 0], {
+        const spriteAspectRatio = catSheet.spriteHeight / catSheet.spriteWidth;
+        let renderX = x;
+        let renderY = y;
+        if (this.positionAnimation) {
+            renderX = this.positionAnimation.currentPos[0];
+            renderY = this.positionAnimation.currentPos[1];
+        }
+        drawSprite(context, catSheet, renderX, renderY, [0, 0], {
             width: PLAYER_DRAW_WIDTH,
-            height: PLAYER_DRAW_HEIGHT,
+            height: PLAYER_DRAW_HEIGHT * spriteAspectRatio,
         });
         context.font = "22px Montserrat";
-        drawCenteredText(context, "CASSIE", x, y - 16, "black", "white");
+        drawCenteredText(context, "CASSIE", x, y - PLAYER_DRAW_HEIGHT / 2 + 32, "black", "white");
         drawCenteredText(context, `HP: ${this.hp}`, x, y + 80, "black", "white");
     }
 }

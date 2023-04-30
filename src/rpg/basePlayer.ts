@@ -8,14 +8,16 @@ export abstract class Player implements Actor {
     hp = 50;
     maxHp = 50;
     displayName: string = "";
+    x: number = 0;
+    y: number = 0;
     constructor(level: number) {
         this.actions = (this.constructor as typeof Player).actions.slice(0, level);
     }
 
     draw(context: CanvasRenderingContext2D, x: number, y: number) {}
     async doTurn() {}
-    
-    async die(){
+
+    async die() {
         currentCombat?.players.splice(currentCombat?.players.indexOf(this), 1);
     }
 }

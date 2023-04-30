@@ -2,7 +2,7 @@ import { selectedAction } from "~/ui/Actions";
 import { Player } from "./basePlayer";
 import { combatTime, currentActionTarget, currentCombat } from "./combat";
 
-const camera = { x: 0, y: 0, scale: 1 };
+export const camera = { x: 0, y: 0, scale: 1 };
 
 export const GRID_SQUARE_WIDTH = 64;
 export const GRID_SQUARE_HEIGHT = 32;
@@ -119,6 +119,8 @@ function drawPlayers(context: CanvasRenderingContext2D, players: Player[]) {
                 PLAYER_DRAW_HEIGHT
             );
         }
+        player.x = leftPadding / 2;
+        player.y = index * PLAYER_DRAW_HEIGHT + startHeight;
         player.draw(context, leftPadding / 2, index * PLAYER_DRAW_HEIGHT + startHeight);
     });
 }
@@ -160,7 +162,17 @@ export function mouseLocationToGridLocation(
     return [x, y];
 }
 
+export function gridLocationToCanvas(gridX: number, gridY: number) {
+    return [
+        g_canvas.width / 2 - camera.x * camera.scale + gridX * camera.scale * GRID_SQUARE_WIDTH + leftPadding,
+        g_canvas.height / 2 - camera.y * camera.scale + gridY * camera.scale * GRID_SQUARE_HEIGHT,
+    ] as const;
+}
+
+// ugh
+let g_canvas: HTMLCanvasElement;
 export function drawCombat(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
+    g_canvas = canvas;
     context.imageSmoothingEnabled = false;
     combatTime.value;
     context.clearRect(0, 0, canvas.width, canvas.height);
