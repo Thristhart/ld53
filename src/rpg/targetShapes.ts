@@ -47,6 +47,19 @@ export function singleGridLocation(target: GridLocation): [GridLocation] {
     return [target];
 }
 
+export function fullGrid(target: GridLocation): GridLocation[] {
+    if (!currentCombat) {
+        return [];
+    }
+    const targets: GridLocation[] = [];
+    for (let x = 0; x < currentCombat.width; x++) {
+        for (let y = 0; y < currentCombat.height; y++) {
+            targets.push([x, y]);
+        }
+    }
+    return targets;
+}
+
 export function cardinalSquares(target: GridLocation): GridLocation[] {
     if (!currentCombat) {
         return [];
@@ -66,12 +79,10 @@ export function cardinalSquares(target: GridLocation): GridLocation[] {
     if (y < currentCombat.height - 1) {
         cardinals.push([x, y + 1]);
     }
-    return cardinals
+    return cardinals;
 }
 
 export function emptyCardinalSquares(target: GridLocation): GridLocation[] {
-    const cardinals = cardinalSquares(target).filter(
-        (square) => !getActorAtLocation(square)
-    );
+    const cardinals = cardinalSquares(target).filter((square) => !getActorAtLocation(square));
     return cardinals;
 }

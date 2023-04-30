@@ -1,6 +1,5 @@
 -   [ ] Finalize rat fight
--   [ ] Pigeon fight
--   [ ] Cop fight
+-   [ ] Pigeon/cop fight
 -   [ ] Clown fight
 
 -   [ ] Cassie abilities
@@ -9,8 +8,7 @@
 -   [ ] Dad ally
 
 -   [ ] Intro writing
--   [ ] Between tutorial and pigeon fight writing
--   [ ] Between pigeon and cop fight writing
+-   [ ] Between tutorial and pigeon cop fight writing
 -   [ ] Between cop and clown fight writing
 -   [ ] Conclusion writing
 

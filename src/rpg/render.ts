@@ -1,6 +1,7 @@
 import { selectedAction } from "~/ui/Actions";
 import { Player } from "./basePlayer";
 import { combatTime, currentActionTarget, currentCombat } from "./combat";
+import { GridLocation } from "./action";
 
 export const camera = { x: 0, y: 0, scale: 1 };
 
@@ -194,6 +195,13 @@ export function gridLocationToCanvas(gridX: number, gridY: number) {
     return [
         g_canvas.width / 2 - camera.x * camera.scale + gridX * camera.scale * GRID_SQUARE_WIDTH + leftPadding / 2,
         g_canvas.height / 2 - camera.y * camera.scale + gridY * camera.scale * GRID_SQUARE_HEIGHT,
+    ] as const;
+}
+
+export function gridLocationToCenter(gridLoc: GridLocation) {
+    return [
+        gridLoc[0] * GRID_SQUARE_WIDTH + GRID_SQUARE_WIDTH / 2,
+        gridLoc[1] * GRID_SQUARE_HEIGHT + GRID_SQUARE_HEIGHT / 2,
     ] as const;
 }
 

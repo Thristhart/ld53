@@ -218,7 +218,7 @@ export async function performCurrentPlayerAction(): Promise<void> {
         await action.animation.animate.call(currentCombat.currentTurn.value, currentActionTarget.value, targets);
     }
     // @ts-ignore fuck it
-    action.apply.call(currentCombat.currentTurn.value, targets);
+    await action.apply.call(currentCombat.currentTurn.value, targets);
     selectedAction.value = undefined;
     currentActionTarget.value = undefined;
     nextTurn();
