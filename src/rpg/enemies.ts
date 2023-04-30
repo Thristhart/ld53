@@ -1,1 +1,1 @@
-export type EnemyType = "rat";
+export type EnemyType = "rat" | "cop";

@@ -6,6 +6,9 @@
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
 }
+.actions button:disabled:after {
+    content: "🔒";
+}
 .actions button:before {
     content: "   ";
     white-space: pre;

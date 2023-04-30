@@ -54,7 +54,8 @@ export function Actions({ player }: ActionProps) {
                                     if (selectedAction.value.targetOptions) {
                                         selectedActionOption.value = selectedAction.value.targetOptions[0];
                                     }
-                                }}>
+                                }}
+                                disabled={player.cooldowns.get(action as any) !== 0}>
                                 {action.name}
                             </button>
                         </li>
