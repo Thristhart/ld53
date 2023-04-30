@@ -91,7 +91,7 @@ const handcuff = {
 
 export class Cop extends BaseEnemy {
     actions = [shoot, handcuff] as const;
-    displayName: string = "Rat";
+    displayName: string = "Copidgeon";
     sheet: SpriteSheet | undefined;
     frameAnimation: FrameAnimation | undefined;
     draw(context: CanvasRenderingContext2D) {

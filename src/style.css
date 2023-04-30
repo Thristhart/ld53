@@ -28,9 +28,9 @@ body {
 body[data-bg="forest"] {
     background-image: url("./assets/forest.jpg");
 }
-body[data-bg="nightforest"] {
-    background-image: url("./assets/nightforest.jpg");
+body[data-bg="road"] {
+    background-image: url("./assets/road.jpg");
 }
-body[data-bg="cave"] {
-    background-image: url("./assets/cave.jpg");
+body[data-bg="suburb"] {
+    background-image: url("./assets/suburb.jpg");
 }

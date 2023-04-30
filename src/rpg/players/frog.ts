@@ -149,8 +149,8 @@ const steelBeams: Action<GridLocation> = {
 
 export class Frog extends Player {
     displayName: string = "Frog";
-    static baseHP = 15;
-    static hpPerLevel = 5;
+    static baseHP = 20;
+    static hpPerLevel = 10;
     static actions = [steelBeams, makeshiftWall, clearTheSite];
     sheet: SpriteSheet | undefined;
     frameAnimation: FrameAnimation | undefined;

@@ -21,7 +21,7 @@ A gorgeous cake sits in the seat next to Cassie.
 cat: And free cake?! Let's gooooo!
 Bushes behind Cassie begin to rustle.
 rat: Hey there, scamp! Hands off our cake!
-~ combat = "tutorial"
+~ combat = "cops"
 ~ shouldShowDialog = false
 cat: yay
 -> END
