@@ -1,5 +1,5 @@
 === intro ===
-#bg:forest
+#bg:park
 cat: — and then I lost the hat! Can you believe it?
 cat: Hello?
 cat: Crow?

@@ -25,7 +25,7 @@ body {
     transition: background-image 600ms linear;
 }
 
-body[data-bg="forest"] {
+body[data-bg="park"] {
     background-image: url("./assets/park.jpg");
 }
 body[data-bg="road"] {
