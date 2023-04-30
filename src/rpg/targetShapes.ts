@@ -26,6 +26,32 @@ export function horizontalLine(target: GridLocation): GridLocation[] {
     return targets;
 }
 
+export function verticalLineWithLength(target: GridLocation, length: number): GridLocation[] {
+    if (!currentCombat) {
+        return [];
+    }
+    const [x, targetY] = target;
+    const targets: GridLocation[] = [];
+    const leftover = (length - 1) / 2;
+    for (let y = Math.max(targetY - leftover, 0); y < Math.min(targetY + 1 + leftover, currentCombat.height); y++) {
+        targets.push([x, y]);
+    }
+    return targets;
+}
+
+export function horizontalLineWithLength(target: GridLocation, length: number): GridLocation[] {
+    if (!currentCombat) {
+        return [];
+    }
+    const [targetX, y] = target;
+    const targets: GridLocation[] = [];
+    const leftover = (length - 1) / 2;
+    for (let x = Math.max(targetX - leftover, 0); x < Math.min(targetX + 1 + leftover, currentCombat.width); x++) {
+        targets.push([x, y]);
+    }
+    return targets;
+}
+
 export function square(target: GridLocation, size: number): GridLocation[] {
     if (!currentCombat) {
         return [];
@@ -47,6 +73,23 @@ export function singleGridLocation(target: GridLocation): [GridLocation] {
     return [target];
 }
 
+export function allPlayers(target: Player): Player[] {
+    return currentCombat?.players ?? [];
+}
+
+export function fullGrid(target: GridLocation): GridLocation[] {
+    if (!currentCombat) {
+        return [];
+    }
+    const targets: GridLocation[] = [];
+    for (let x = 0; x < currentCombat.width; x++) {
+        for (let y = 0; y < currentCombat.height; y++) {
+            targets.push([x, y]);
+        }
+    }
+    return targets;
+}
+
 export function cardinalSquares(target: GridLocation): GridLocation[] {
     if (!currentCombat) {
         return [];
@@ -66,12 +109,10 @@ export function cardinalSquares(target: GridLocation): GridLocation[] {
     if (y < currentCombat.height - 1) {
         cardinals.push([x, y + 1]);
     }
-    return cardinals
+    return cardinals;
 }
 
 export function emptyCardinalSquares(target: GridLocation): GridLocation[] {
-    const cardinals = cardinalSquares(target).filter(
-        (square) => !getActorAtLocation(square)
-    );
+    const cardinals = cardinalSquares(target).filter((square) => !getActorAtLocation(square));
     return cardinals;
 }

@@ -75,17 +75,14 @@ const screech = {
 } as const;
 
 export class Rat extends BaseEnemy {
+    static maxHP = 1;
     actions = [gnaw, screech] as const;
     displayName: string = "Rat";
     frameAnimation: FrameAnimation | undefined;
     draw(context: CanvasRenderingContext2D) {
-        drawSprite(
-            context,
-            ratSheet,
-            this.x * GRID_SQUARE_WIDTH + GRID_SQUARE_WIDTH / 2,
-            this.y * GRID_SQUARE_HEIGHT + GRID_SQUARE_HEIGHT / 2,
-            this.frameAnimation?.frames[this.frameAnimation.currentIndex] ?? [0, 0]
-        );
+        let x = this.positionAnimation?.currentPos[0] ?? this.x * GRID_SQUARE_WIDTH + GRID_SQUARE_WIDTH / 2;
+        let y = this.positionAnimation?.currentPos[1] ?? this.y * GRID_SQUARE_HEIGHT + GRID_SQUARE_HEIGHT / 2;
+        drawSprite(context, ratSheet, x, y, this.frameAnimation?.frames[this.frameAnimation.currentIndex] ?? [0, 0]);
         super.draw(context);
     }
     async doTurn(): Promise<void> {
@@ -97,7 +94,4 @@ export class Rat extends BaseEnemy {
         }
     }
 
-    async die() {
-        currentCombat?.entities.splice(currentCombat?.entities.indexOf(this), 1);
-    }
 }

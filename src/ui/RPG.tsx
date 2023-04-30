@@ -83,9 +83,8 @@ export function RPG() {
                             const location = mouseLocationToGridLocation(canvas, e.clientX, e.clientY);
                             currentActionTarget.value = location;
                         } else if (selectedAction.value && selectedAction.value.targetType === "player") {
-                            const location = getPlayerUnderMouse(canvas, e.clientX, e.clientY);
-                            console.log(location);
-                            currentActionTarget.value = location;
+                            const player = getPlayerUnderMouse(canvas, e.clientX, e.clientY);
+                            currentActionTarget.value = player;
                         }
                     }}
                     onClick={

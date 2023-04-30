@@ -1,5 +1,6 @@
 import { Action, GridLocation } from "../action";
 import { Actor } from "../actor";
+import { PositionAnimation } from "../animation";
 import { BaseEntity } from "../baseEntity";
 import { Player } from "../basePlayer";
 import { currentCombat } from "../combat";
@@ -9,10 +10,17 @@ export class BaseEnemy<ActionTypes = Action<Player> | Action<GridLocation>>
     extends BaseEntity
     implements Actor<ActionTypes>
 {
+    static maxHP = 50;
     maxHP = 50;
     hp = 50;
     actions: ReadonlyArray<ActionTypes> = [];
     displayName: string = "";
+    constructor(x: number, y: number) {
+        super(x, y);
+        const derivedEnemy = this.constructor as typeof BaseEnemy;
+        this.hp = derivedEnemy.maxHP;
+        this.maxHP = derivedEnemy.maxHP;
+    }
     draw(context: CanvasRenderingContext2D) {
         if (currentCombat?.currentTurn.value === this) {
             context.strokeStyle = "white";
@@ -34,5 +42,7 @@ export class BaseEnemy<ActionTypes = Action<Player> | Action<GridLocation>>
     }
     async doTurn() {}
 
-    async die() {}
+    async die() {
+        currentCombat?.entities.splice(currentCombat?.entities.indexOf(this), 1);
+    }
 }

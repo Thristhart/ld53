@@ -1,6 +1,6 @@
 import { Signal, signal } from "@preact/signals";
 import { showDialog } from "~/story";
-import { selectedAction } from "~/ui/Actions";
+import { selectedAction, selectedActionOption } from "~/ui/Actions";
 import { renderUI } from "~/ui/ui";
 import { wait } from "~/util/wait";
 import { Action, GridLocation } from "./action";
@@ -42,7 +42,7 @@ export const combats = {
     tutorial: makeCombat({
         gridWidth: 5,
         gridHeight: 5,
-        players: [Cassie, Frog],
+        players: [Frog, Cassie],
         playerLevel: 2,
         enemies: [
             { type: "rat", x: 1, y: 3 },
@@ -126,12 +126,14 @@ export function nextTurn() {
         return;
     }
     actorsWhoHaveActedThisRound.add(currentCombat.currentTurn.value);
-    // TODO: skip if dead
     if (currentCombat.currentTurn.value instanceof Player) {
         const playerIndex = currentCombat.players.indexOf(currentCombat.currentTurn.value);
         if (playerIndex < currentCombat.players.length - 1) {
             // this will fall apart if there's a way to go to previous player's turn... so don't do that
             currentCombat.currentTurn.value = currentCombat.players[playerIndex + 1];
+            if (currentCombat.currentTurn.value instanceof Player) {
+                    currentCombat.currentTurn.value.decrementCooldown();
+            }
             return;
         }
     }
@@ -209,7 +211,7 @@ export async function performCurrentPlayerAction(): Promise<void> {
         return;
     }
     const action = selectedAction.value;
-    const targets = action.targeting(currentActionTarget.value as Player & GridLocation);
+    const targets = action.targeting(currentActionTarget.value as Player & GridLocation, selectedActionOption.value);
     if (targets.length === 0) {
         return;
     }
@@ -218,7 +220,7 @@ export async function performCurrentPlayerAction(): Promise<void> {
         await action.animation.animate.call(currentCombat.currentTurn.value, currentActionTarget.value, targets);
     }
     // @ts-ignore fuck it
-    action.apply.call(currentCombat.currentTurn.value, targets);
+    await action.apply.call(currentCombat.currentTurn.value, targets);
     selectedAction.value = undefined;
     currentActionTarget.value = undefined;
     nextTurn();
@@ -234,7 +236,7 @@ export async function performNPCAction<TargetType extends Player | GridLocation>
     if (!currentCombat) {
         return;
     }
-    const targets = action.targeting(target);
+    const targets = action.targeting(target, selectedActionOption.value);
     if (action.animation) {
         await action.animation.animate.call(actor, target, targets);
     }

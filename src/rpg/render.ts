@@ -1,6 +1,7 @@
-import { selectedAction } from "~/ui/Actions";
+import { selectedAction, selectedActionOption } from "~/ui/Actions";
 import { Player } from "./basePlayer";
 import { combatTime, currentActionTarget, currentCombat } from "./combat";
+import { GridLocation } from "./action";
 
 export const camera = { x: 0, y: 0, scale: 1 };
 
@@ -36,7 +37,7 @@ function drawGrid(context: CanvasRenderingContext2D, width: number, height: numb
         currentActionTarget.value &&
         !(currentActionTarget.value instanceof Player)
     ) {
-        const targets = selectedAction.value.targeting(currentActionTarget.value);
+        const targets = selectedAction.value.targeting(currentActionTarget.value, selectedActionOption.value);
         for (const target of targets) {
             if (!(target instanceof Player)) {
                 const [x, y] = target;
@@ -109,6 +110,15 @@ export const PLAYER_DRAW_HEIGHT = 200;
 
 function drawPlayers(context: CanvasRenderingContext2D, players: Player[]) {
     const startHeight = context.canvas.height / 2 - PLAYER_DRAW_HEIGHT * ((players.length - 1) / 2);
+    let targetedPlayers: Player[] = [];
+    if (
+        selectedAction.value &&
+        selectedAction.value.targetType === "player" &&
+        currentActionTarget.value &&
+        currentActionTarget.value instanceof Player
+    ) {
+        targetedPlayers = selectedAction.value.targeting(currentActionTarget.value, selectedActionOption.value);
+    }
     players.forEach((player, index) => {
         if (currentCombat?.currentTurn.value === player) {
             context.strokeStyle = "white";
@@ -119,12 +129,7 @@ function drawPlayers(context: CanvasRenderingContext2D, players: Player[]) {
                 PLAYER_DRAW_HEIGHT
             );
         }
-        if (
-            selectedAction.value &&
-            selectedAction.value.targetType === "player" &&
-            currentActionTarget.value &&
-            currentActionTarget.value === player
-        ) {
+        if (targetedPlayers.includes(player)) {
             context.fillStyle = "rgb(206 251 255 / 30%)";
             context.fillRect(
                 leftPadding / 2 - PLAYER_DRAW_WIDTH / 2,
@@ -194,6 +199,13 @@ export function gridLocationToCanvas(gridX: number, gridY: number) {
     return [
         g_canvas.width / 2 - camera.x * camera.scale + gridX * camera.scale * GRID_SQUARE_WIDTH + leftPadding / 2,
         g_canvas.height / 2 - camera.y * camera.scale + gridY * camera.scale * GRID_SQUARE_HEIGHT,
+    ] as const;
+}
+
+export function gridLocationToCenter(gridLoc: GridLocation) {
+    return [
+        gridLoc[0] * GRID_SQUARE_WIDTH + GRID_SQUARE_WIDTH / 2,
+        gridLoc[1] * GRID_SQUARE_HEIGHT + GRID_SQUARE_HEIGHT / 2,
     ] as const;
 }
 

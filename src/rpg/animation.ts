@@ -40,7 +40,8 @@ export function makeLerpAnimation(
 export function makeFrameAnimation(
     frames: ReadonlyArray<readonly [x: number, y: number]>,
     timePerFrame: number,
-    startTime: number = 0
+    startTime: number = 0,
+    onComplete?: () => void
 ): FrameAnimation {
     const animation = {
         frames,
@@ -51,6 +52,9 @@ export function makeFrameAnimation(
             const dt = time - startTime;
             if (dt > 0) {
                 animation.currentIndex = Math.floor(dt / timePerFrame);
+            }
+            if (dt >= frames.length * timePerFrame) {
+                onComplete?.();
             }
         },
     };
