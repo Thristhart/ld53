@@ -1,17 +1,17 @@
-import { SpriteSheet, drawSprite } from "../drawSprite";
-import { loadImage } from "../loadImage";
 import ratSheetPath from "~/assets/rat-Sheet.png";
-import { BaseEnemy } from "./baseEnemy";
-import { GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH } from "../render";
-import { Action, GridLocation } from "../action";
-import { cardinalSquares, emptyCardinalSquares, singleGridLocation, singlePlayer } from "../targetShapes";
 import { randomFromArray } from "~/util/randomFromArray";
-import { Player } from "../basePlayer";
+import { GridLocation } from "../action";
 import { damagePlayer } from "../actionUtil";
 import { Actor } from "../actor";
-import { createEnemy, currentCombat, getActorAtLocation, lastNPCLog, performNPCAction, spawnEnemy } from "../combat";
-import { FrameAnimation, makeFrameAnimation } from "../animation";
 import { animate } from "../animate";
+import { FrameAnimation, makeFrameAnimation } from "../animation";
+import { Player } from "../basePlayer";
+import { currentCombat, lastNPCLog, performNPCAction, spawnEnemy } from "../combat";
+import { SpriteSheet, drawSprite } from "../drawSprite";
+import { loadImage } from "../loadImage";
+import { GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH } from "../render";
+import { emptyCardinalSquares, singlePlayer } from "../targetShapes";
+import { BaseEnemy } from "./baseEnemy";
 
 const ratSheet: SpriteSheet = {
     image: loadImage(ratSheetPath),
@@ -92,8 +92,7 @@ export class Rat extends BaseEnemy {
         const validActions = this.actions.filter((action) => {
             if (action.id === "screech") {
                 return spawnSpaces.length > 0;
-            }
-            else {
+            } else {
                 return true;
             }
         });

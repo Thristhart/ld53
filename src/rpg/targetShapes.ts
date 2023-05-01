@@ -1,6 +1,6 @@
 import { GridLocation } from "./action";
 import { Player } from "./basePlayer";
-import { currentCombat, getActorAtLocation } from "./combat";
+import { currentCombat, isActorAtLocation, isEnemyAtLocation } from "./combat";
 
 export function verticalLine(target: GridLocation): GridLocation[] {
     if (!currentCombat) {
@@ -21,7 +21,7 @@ export function verticalLineWithoutActors(target: GridLocation): GridLocation[] 
     const targets: GridLocation[] = [];
     for (let y = 0; y < currentCombat.height; y++) {
         const spot: [number, number] = [x, y];
-        if (!getActorAtLocation(spot)) {
+        if (!isActorAtLocation(spot)) {
             targets.push(spot);
         }
     }
@@ -36,7 +36,7 @@ export function verticalLineWithActors(target: GridLocation): GridLocation[] {
     const targets: GridLocation[] = [];
     for (let y = 0; y < currentCombat.height; y++) {
         const spot: [number, number] = [x, y];
-        if (getActorAtLocation(spot)) {
+        if (isActorAtLocation(spot)) {
             targets.push(spot);
         }
     }
@@ -63,7 +63,7 @@ export function horizontalLineWithoutActors(target: GridLocation): GridLocation[
     const targets: GridLocation[] = [];
     for (let x = 0; x < currentCombat.width; x++) {
         const spot: [number, number] = [x, y];
-        if (!getActorAtLocation(spot)) {
+        if (!isActorAtLocation(spot)) {
             targets.push(spot);
         }
     }
@@ -78,7 +78,7 @@ export function horizontalLineWithActors(target: GridLocation): GridLocation[] {
     const targets: GridLocation[] = [];
     for (let x = 0; x < currentCombat.width; x++) {
         const spot: [number, number] = [x, y];
-        if (getActorAtLocation(spot)) {
+        if (isActorAtLocation(spot)) {
             targets.push(spot);
         }
     }
@@ -137,7 +137,7 @@ export function isDiagonal(from: GridLocation, to: GridLocation): boolean {
 }
 
 export function canMove(from: GridLocation, to: GridLocation): boolean {
-    if (getActorAtLocation(to)) {
+    if (isActorAtLocation(to)) {
         return false;
     }
     const dx = to[0] - from[0];
@@ -146,7 +146,7 @@ export function canMove(from: GridLocation, to: GridLocation): boolean {
     const unit = [dx / distance, dy / distance];
     let considering: GridLocation = [Math.round(from[0] + unit[0]), Math.round(from[1] + unit[1])];
     while (considering[0] !== to[0] || considering[1] !== to[1]) {
-        if (getActorAtLocation(considering)) {
+        if (isActorAtLocation(considering)) {
             return false;
         }
         considering = [Math.round(considering[0] + unit[0]), Math.round(considering[1] + unit[1])];
@@ -162,7 +162,7 @@ export function singleGridLocation(target: GridLocation): [GridLocation] {
 }
 
 export function singleGridLocationWithEnemy(target: GridLocation): GridLocation[] {
-    if (getActorAtLocation(target)) {
+    if (isEnemyAtLocation(target)) {
         return [target];
     }
     return [];
@@ -237,6 +237,6 @@ export function diagonalSquares(target: GridLocation): GridLocation[] {
 }
 
 export function emptyCardinalSquares(target: GridLocation): GridLocation[] {
-    const cardinals = cardinalSquares(target).filter((square) => !getActorAtLocation(square));
+    const cardinals = cardinalSquares(target).filter((square) => !isActorAtLocation(square));
     return cardinals;
 }

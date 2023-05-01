@@ -17,6 +17,7 @@ import { Bear } from "./players/bear";
 import { Clown } from "./enemies/clown";
 import { Howl } from "howler";
 import combatMusicPath from "~/assets/audio/battle final mix.mp3";
+import { Fire } from "./entities/fire";
 
 const musicVolume = 0.08;
 
@@ -80,10 +81,7 @@ export const combats = {
             { type: "rat", x: 1, y: 3 },
             { type: "rat", x: 2, y: 1 },
             { type: "rat", x: 2, y: 3 },
-            { type: "rat", x: 3, y: 1 },
-            { type: "rat", x: 3, y: 3 },
             { type: "rat", x: 4, y: 1 },
-            { type: "rat", x: 4, y: 2 },
             { type: "rat", x: 4, y: 3 },
         ],
         startingSide: StartingSide.enemy,
@@ -214,6 +212,12 @@ function getSortedEntityTurns(entities: BaseEntity[]) {
             return -1;
         }
         if (a.y > b.y) {
+            return 1;
+        }
+        if (a instanceof Fire) {
+            return -1;
+        }
+        if (b instanceof Fire) {
             return 1;
         }
         return 0;
@@ -350,10 +354,18 @@ export async function performNPCAction<TargetType extends Player | GridLocation>
     return action.apply.call(actor, targets);
 }
 
-export function getActorAtLocation(location: GridLocation): BaseEntity & Actor {
-    return currentCombat?.entities.find(
+export function getActorsAtLocation(location: GridLocation): (BaseEntity & Actor)[] {
+    return currentCombat?.entities.filter(
         (ent) => isActor(ent) && ent.x === location[0] && ent.y === location[1]
-    ) as BaseEntity & Actor;
+    ) as (BaseEntity & Actor)[];
+}
+
+export function isActorAtLocation(location: GridLocation) {
+    return getActorsAtLocation(location).length > 0;
+}
+
+export function isEnemyAtLocation(location: GridLocation) {
+    return getActorsAtLocation(location).find((actor) => actor instanceof BaseEnemy);
 }
 
 function checkVictoryOrDefeat() {
