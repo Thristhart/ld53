@@ -40,7 +40,7 @@ const suplex: Action<GridLocation> = {
     id: "suplex",
     name: "Suplex",
     description:
-        "BEARNAME suplexes the target, pulling them forward a square. If they hit another enemy, both will take damage.",
+        "Walker suplexes the target, pulling them forward a square. If they hit another enemy, both will take damage.",
     targetType: "grid",
     targeting(target) {
         // Don't allow first square bc pulling there does nothing
@@ -98,7 +98,7 @@ const suplex: Action<GridLocation> = {
 const throwBike: Action<GridLocation> = {
     id: "throwBike",
     name: "Throw Bike",
-    description: "BEARNAME throws a bike across two rows, impacting the first two enemies hit.",
+    description: "Walker throws a bike across two rows, impacting the first two enemies hit.",
     targetType: "grid",
     targeting(target) {
         let rows = [target[1] - 1, target[1]];
@@ -170,7 +170,7 @@ const reversal: Action<Player> = {
     id: "reversal",
     name: "Reversal",
     description:
-        "BEARNAME protects the target, countering the next attack that would hit them, and returning the damage to the attacker.",
+        "Walker protects the target, countering the next attack that would hit them, and returning the damage to the attacker.",
     targetType: "player",
     targeting(player) {
         if (player instanceof Bear) {
@@ -227,7 +227,7 @@ const reversal: Action<Player> = {
 const finisher: Action<GridLocation> = {
     id: "finisher",
     name: "Heat Finisher",
-    description: "BEARNAME savages the target, dealing an incredible amount of damage. Two turn cooldown.",
+    description: "Walker savages the target, dealing an incredible amount of damage. Two turn cooldown.",
     cooldown: 2,
     targetType: "grid",
     targeting: singleGridLocationWithEnemy,
@@ -255,7 +255,7 @@ const finisher: Action<GridLocation> = {
 };
 
 export class Bear extends Player {
-    displayName: string = "Bear";
+    displayName: string = "Walker";
     static baseHP = 12;
     static hpPerLevel = 8;
     static actions = [suplex, throwBike, reversal, finisher];
@@ -286,7 +286,7 @@ export class Bear extends Player {
             height: PLAYER_DRAW_HEIGHT * spriteAspectRatio,
         });
         context.font = "22px Montserrat";
-        drawCenteredText(context, "BEAR", renderX, renderY - PLAYER_DRAW_HEIGHT / 2 + 32, "black", "white");
+        drawCenteredText(context, "WALKER", renderX, renderY - PLAYER_DRAW_HEIGHT / 2 + 32, "black", "white");
         drawCenteredText(context, `HP: ${this.hp}`, renderX, renderY + 80, "black", "white");
 
         if (this.barrier) {

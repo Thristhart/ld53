@@ -39,7 +39,7 @@ const frogCroakSheet: SpriteSheet = {
 const makeshiftWall: Action<Player> = {
     id: "makeshiftWall",
     name: "Makeshift Wall",
-    description: "FROGNAME erects a barrier in front of all players, preventing 5 damage.",
+    description: "Tony erects a barrier in front of all players, preventing 5 damage.",
     targetType: "player",
     targeting: allPlayers,
     async apply(targets) {
@@ -52,7 +52,7 @@ const makeshiftWall: Action<Player> = {
 const clearTheSite: Action<GridLocation> = {
     id: "clearTheSite",
     name: "Clear the Site",
-    description: "FROGNAME shouts, knocking enemies back two squares and dealing damage on impact.",
+    description: "Tony shouts, knocking enemies back two squares and dealing damage on impact.",
     targetType: "grid",
     targeting: fullGrid,
     async apply() {
@@ -134,7 +134,7 @@ const clearTheSite: Action<GridLocation> = {
 const steelBeams: Action<GridLocation> = {
     id: "steelBeams",
     name: "Steel Beams",
-    description: "FROGNAME drops steel beams on the target, dealing damage.",
+    description: "Tony drops steel beams on the target, dealing damage.",
     targetType: "grid",
     targeting(target, targetOption) {
         if (targetOption === "Vertical") {
@@ -154,7 +154,7 @@ const steelBeams: Action<GridLocation> = {
 const cordonOff: Action<GridLocation> = {
     id: "cordonOff",
     name: "Cordon Off",
-    description: "FROGNAME drops a line of cones, preventing movement.",
+    description: "Tony drops a line of cones, preventing movement.",
     targetType: "grid",
     targeting(target, targetOption) {
         if (targetOption === "Vertical") {
@@ -179,7 +179,7 @@ const cordonOff: Action<GridLocation> = {
 };
 
 export class Frog extends Player {
-    displayName: string = "Frog";
+    displayName: string = "Tony";
     static baseHP = 20;
     static hpPerLevel = 6;
     static actions = [steelBeams, makeshiftWall, clearTheSite, cordonOff];
@@ -204,7 +204,7 @@ export class Frog extends Player {
             height: PLAYER_DRAW_HEIGHT * spriteAspectRatio,
         });
         context.font = "22px Montserrat";
-        drawCenteredText(context, "FROG", x, y - PLAYER_DRAW_HEIGHT / 2 + 32, "black", "white");
+        drawCenteredText(context, "TONY", x, y - PLAYER_DRAW_HEIGHT / 2 + 32, "black", "white");
         drawCenteredText(context, `HP: ${this.hp}`, x, y + 80, "black", "white");
 
         if (this.barrier) {

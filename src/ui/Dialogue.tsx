@@ -24,6 +24,10 @@ function getSpeakerName(speaker: Speaker) {
         case "cat":
         case "cattruck":
             return "Cassie";
+        case "frog":
+            return "Tony";
+        case "bear":
+            return "Walker";
         default:
             return speaker;
     }
