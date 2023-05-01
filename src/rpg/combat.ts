@@ -20,8 +20,26 @@ import combatMusicPath from "~/assets/audio/battle final mix.mp3";
 
 const combatMusic1 = new Howl({ src: [combatMusicPath], volume: 0.2 });
 const combatMusic2 = new Howl({ src: [combatMusicPath], volume: 0.2 });
-
 let currentCombatMusic = combatMusic1;
+
+if (import.meta.env.DEV) {
+    //@ts-ignore
+    window.DEBUG_MUSIC = () => currentCombatMusic;
+}
+
+const loopEndTime = 188.8;
+
+function doLoopFrame() {
+    requestAnimationFrame(doLoopFrame);
+    const pos = currentCombatMusic.seek();
+    if (pos > loopEndTime) {
+        currentCombatMusic = currentCombatMusic === combatMusic1 ? combatMusic2 : combatMusic1;
+        currentCombatMusic.seek(3.2);
+        currentCombatMusic.play();
+    }
+}
+
+doLoopFrame();
 
 interface EnemyDescription {
     type: EnemyType;

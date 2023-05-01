@@ -11,5 +11,5 @@
 -   [x] Between cop and clown fight writing
 -   [ ] Conclusion writing
 
--   [ ] Integrate battle music
+-   [x] Integrate battle music
 -   [ ] Maybe: sound effects
