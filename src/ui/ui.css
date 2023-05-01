@@ -27,7 +27,9 @@
 }
 #logo {
     font-size: calc(var(--dialogue-font-size) * 5);
-    background-image: url("../assets/logo.png");
+    background-image: url("../assets/truck_full.png");
+    background-repeat: no-repeat;
+    background-position: center;
     width: 3em;
     height: 3em;
     background-size: 100%;
