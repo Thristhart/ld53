@@ -168,6 +168,12 @@ const reversal: Action<Player> = {
     async apply(targets) {
         const bear = this as Bear;
 
+        // remove all other onDamaged things
+        // this only works as long as bear is the only ondamaged, which is probably going to be true
+        currentCombat?.players.forEach((player) => {
+            player.onDamaged = undefined;
+        });
+
         const target = targets[0];
         target.onDamaged = async (attacker, damage) => {
             bear.sheet = bearAttackSheet;
