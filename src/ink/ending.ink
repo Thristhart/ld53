@@ -16,7 +16,7 @@ bear: How about we do cake then presents, dear.
 leslie: Ok!
 leslie: Come on everybody! Cake!!!
 #speaking:frog,leslie
-frog: Yay!
+frog: Love a cake.
 #speaking:cat,leslie
-cat: Yay!
+cat: Yessss! Cake time!
 -> END
