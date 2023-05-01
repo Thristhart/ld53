@@ -61,7 +61,7 @@ body:after {
     animation: fourFrameAnimation 1s step-start;
     animation-delay: 300ms;
     height: 10em;
-    top: -9em;
+    top: -8em;
 }
 .speaker-portrait.clown {
     background-image: url("../assets/clown_sheet.png");

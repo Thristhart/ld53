@@ -270,17 +270,16 @@ async function doNPCTurn() {
     const doTurn = npc?.doTurn?.bind(npc);
     if (doTurn) {
         await wait(npc?.turnDelay ?? TURN_DELAY);
+        if (!currentCombat) {
+            return;
+        }
         await doTurn();
         await wait(npc?.turnDelay ?? TURN_DELAY);
     }
     nextTurn();
 }
 
-export function endCombat() {
-    currentCombatMusic.fade(currentCombatMusic.volume(), 0, 300);
-    setTimeout(() => {
-        currentCombatMusic.stop();
-    }, 300);
+export async function endCombat() {
     currentCombat = undefined;
     if (import.meta.env.DEV) {
         //@ts-ignore
@@ -290,11 +289,14 @@ export function endCombat() {
     if (updateCombatTimeAnimationFrame) {
         cancelAnimationFrame(updateCombatTimeAnimationFrame);
     }
+    currentCombatMusic.fade(currentCombatMusic.volume(), 0, 300);
+    await wait(300);
+    currentCombatMusic.stop();
 }
 
-export function restartCombat() {
+export async function restartCombat() {
     let combatToRestart = currentCombat!.name;
-    endCombat();
+    await endCombat();
     startCombat(combatToRestart);
 }
 
@@ -336,7 +338,7 @@ export async function performNPCAction<TargetType extends Player | GridLocation>
     action: Action<TargetType>,
     target: TargetType
 ): Promise<void> {
-    if (!currentCombat) {
+    if (!currentCombat || currentCombat.state.value === "lost" || currentCombat.state.value === "won") {
         return;
     }
     const targets = action.targeting(target, selectedActionOption.value);
