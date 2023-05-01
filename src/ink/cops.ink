@@ -1,6 +1,5 @@
 === cops ===
 #bg:road
-CASSIE GETS PULLED OVER BY THE COPS
 #speaking:cattruck,
 cattruck: Ok, Cassie, you gotta make sure you get there before the party's over.
 cattruck: Traffic isn't that bad, so I'm making good time.
