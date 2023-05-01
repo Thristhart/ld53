@@ -13,13 +13,14 @@ import {
     camera,
     gridLocationToCanvas,
 } from "../render";
-import { horizontalLine, square } from "../targetShapes";
+import { horizontalLine, singleGridLocationWithEnemy, square } from "../targetShapes";
 import { PositionAnimation, makeLerpAnimation } from "../animation";
-import { currentCombat } from "../combat";
+import { currentCombat, getActorAtLocation } from "../combat";
 import { mailStormParticles } from "../particles/mail";
 import { animate } from "../animate";
 import { wait } from "~/util/wait";
 import { drawBarrier } from "./drawBarrier";
+import { Box } from "../enemies/box";
 
 const catSheet: SpriteSheet = {
     image: loadImage(catSheetPath),
@@ -76,13 +77,27 @@ const mailStorm: Action<GridLocation> = {
     },
 };
 
+const sendOff: Action<GridLocation> = {
+    id: "sendOff",
+    name: "Send Off",
+    description: "Cassie packages the target up into a box for three turns.",
+    targetType: "grid",
+    targeting: singleGridLocationWithEnemy,
+    async apply(targetSquares) {
+        const victim = getActorAtLocation(targetSquares[0]);
+        const box = new Box(victim);
+
+        currentCombat?.entities.splice(currentCombat?.entities.indexOf(victim), 1, box);
+    },
+};
+
 export class Cassie extends Player {
     displayName: string = "Cassie";
     static baseHP = 15;
     static hpPerLevel = 5;
-    static actions = [runDown, mailStorm];
-    positionAnimation: PositionAnimation | undefined;
-    draw(context: CanvasRenderingContext2D, x: number, y: number): void {
+    static actions = [runDown, mailStorm, sendOff];
+    draw(context: CanvasRenderingContext2D, x: number, y: number, isTargeted: boolean): void {
+        super.draw(context, x, y, isTargeted);
         const spriteAspectRatio = catSheet.spriteHeight / catSheet.spriteWidth;
         let renderX = x;
         let renderY = y;
@@ -95,8 +110,8 @@ export class Cassie extends Player {
             height: PLAYER_DRAW_HEIGHT * spriteAspectRatio,
         });
         context.font = "22px Montserrat";
-        drawCenteredText(context, "CASSIE", x, y - PLAYER_DRAW_HEIGHT / 2 + 32, "black", "white");
-        drawCenteredText(context, `HP: ${this.hp}`, x, y + 80, "black", "white");
+        drawCenteredText(context, "CASSIE", renderX, renderY - PLAYER_DRAW_HEIGHT / 2 + 32, "black", "white");
+        drawCenteredText(context, `HP: ${this.hp}`, renderX, renderY + 80, "black", "white");
 
         if (this.barrier) {
             drawBarrier(context, x + PLAYER_DRAW_WIDTH / 2, y - 64, this.barrier);

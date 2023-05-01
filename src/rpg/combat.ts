@@ -13,6 +13,7 @@ import { Rat } from "./enemies/rat";
 import { Cassie } from "./players/cassie";
 import { Frog } from "./players/frog";
 import { Cop } from "./enemies/cop";
+import { Bear } from "./players/bear";
 
 interface EnemyDescription {
     type: EnemyType;
@@ -65,6 +66,18 @@ export const combats = {
             { type: "cop", x: 4, y: 4 },
         ],
         startingSide: StartingSide.enemy,
+    }),
+    clowns: makeCombat({
+        gridWidth: 5,
+        gridHeight: 5,
+        players: [Bear, Cassie, Frog],
+        playerLevel: 4,
+        enemies: [
+            { type: "cop", x: 4, y: 3 },
+            { type: "cop", x: 1, y: 3 },
+            { type: "cop", x: 4, y: 2 },
+        ],
+        startingSide: StartingSide.player,
     }),
 } as const;
 
@@ -248,6 +261,8 @@ export async function performCurrentPlayerAction(): Promise<void> {
     }
     // @ts-ignore fuck it
     await action.apply.call(currentCombat.currentTurn.value, targets);
+    // @ts-ignore
+    currentCombat.currentTurn.value.cooldowns.set(action, action.cooldown ?? 0);
     selectedAction.value = undefined;
     currentActionTarget.value = undefined;
     nextTurn();
@@ -288,8 +303,14 @@ function checkVictoryOrDefeat() {
     }
 }
 
-export function damageActor(from: Actor, target: Actor, damage: number) {
+export async function damageActor(from: Actor, target: Actor, damage: number) {
     if (target instanceof Player) {
+        if (target.onDamaged) {
+            const shouldTakeDamage = await target.onDamaged(from, damage);
+            if (!shouldTakeDamage) {
+                return;
+            }
+        }
         const barrierReduction = Math.min(target.barrier, damage);
         damage -= barrierReduction;
         target.barrier -= barrierReduction;

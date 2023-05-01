@@ -18,4 +18,6 @@ bear: Uh-huh.
 clown: If you're not gonna hire us, we're gonna bust up this so called "party."
 #speaking:cat,clown
 cat: Not if we have anything to say about it!
+~ combat = "clowns"
+~ shouldShowDialog = false
 -> ending

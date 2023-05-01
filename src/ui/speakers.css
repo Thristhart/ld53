@@ -21,6 +21,10 @@ body:after {
     background-size: 80%;
     background-position-y: 70%;
 }
+.speaker-portrait.bear {
+    background-image: url("../assets/bear.png");
+    background-size: 100%;
+}
 .speaker-portrait.rat {
     background-image: url("../assets/rat-Sheet.png");
     background-size: 400%;

@@ -73,6 +73,13 @@ export function singleGridLocation(target: GridLocation): [GridLocation] {
     return [target];
 }
 
+export function singleGridLocationWithEnemy(target: GridLocation): GridLocation[] {
+    if (getActorAtLocation(target)) {
+        return [target];
+    }
+    return [];
+}
+
 export function allPlayers(target: Player): Player[] {
     return currentCombat?.players ?? [];
 }

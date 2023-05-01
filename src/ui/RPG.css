@@ -6,6 +6,9 @@
         "empty status";
     grid-template-rows: 1fr min-content;
     grid-template-columns: var(--playerSize) 1fr;
+
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
 }
 #rpg #grid {
     grid-area: grid;
@@ -23,7 +26,6 @@
 
 #status {
     position: relative;
-    background-color: cornflowerblue;
     grid-area: status;
 
     margin-bottom: 2rem;

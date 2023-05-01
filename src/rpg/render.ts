@@ -120,27 +120,14 @@ function drawPlayers(context: CanvasRenderingContext2D, players: Player[]) {
         targetedPlayers = selectedAction.value.targeting(currentActionTarget.value, selectedActionOption.value);
     }
     players.forEach((player, index) => {
-        if (currentCombat?.currentTurn.value === player) {
-            context.strokeStyle = "white";
-            context.strokeRect(
-                leftPadding / 2 - PLAYER_DRAW_WIDTH / 2,
-                index * PLAYER_DRAW_HEIGHT + startHeight - PLAYER_DRAW_HEIGHT / 2,
-                PLAYER_DRAW_WIDTH,
-                PLAYER_DRAW_HEIGHT
-            );
-        }
-        if (targetedPlayers.includes(player)) {
-            context.fillStyle = "rgb(206 251 255 / 30%)";
-            context.fillRect(
-                leftPadding / 2 - PLAYER_DRAW_WIDTH / 2,
-                index * PLAYER_DRAW_HEIGHT + startHeight - PLAYER_DRAW_HEIGHT / 2,
-                PLAYER_DRAW_WIDTH,
-                PLAYER_DRAW_HEIGHT
-            );
-        }
-        player.x = leftPadding / 2;
+        player.x = PLAYER_DRAW_WIDTH / 2;
         player.y = index * PLAYER_DRAW_HEIGHT + startHeight;
-        player.draw(context, leftPadding / 2, index * PLAYER_DRAW_HEIGHT + startHeight);
+        player.draw(
+            context,
+            PLAYER_DRAW_WIDTH / 2,
+            index * PLAYER_DRAW_HEIGHT + startHeight,
+            targetedPlayers.includes(player)
+        );
     });
 }
 
@@ -216,6 +203,7 @@ interface Particle {
     velocityY: number;
     lifetime: number;
     draw(context: CanvasRenderingContext2D, dt: number): void;
+    onDestroy?(): void;
 }
 
 const particles = new Set<Particle>();
@@ -225,6 +213,7 @@ function drawParticles(context: CanvasRenderingContext2D, dt: number) {
         particle.lifetime -= dt;
         if (particle.lifetime <= 0) {
             particles.delete(particle);
+            particle.onDestroy?.();
         }
         particle.x += particle.velocityX * (dt / 16);
         particle.y += particle.velocityY * (dt / 16);
