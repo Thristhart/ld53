@@ -37,3 +37,9 @@ body[data-bg="road"] {
 body[data-bg="suburb"] {
     background-image: url("./assets/suburb.jpg");
 }
+
+/** preload */
+body:before {
+    content: "";
+    background-image: url("./assets/park.jpg") url("./assets/road.jpg") url("./assets/suburb.jpg");
+}
