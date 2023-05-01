@@ -6,7 +6,7 @@ export interface Actor<ActionTypes = Action<Player> | Action<GridLocation>> {
     hp: number;
     maxHP: number;
     displayName: string;
-    doTurn: () => Promise<void>;
+    doTurn?: () => Promise<void>;
     die: () => Promise<void>;
 }
 

@@ -13,6 +13,20 @@ export function verticalLine(target: GridLocation): GridLocation[] {
     }
     return targets;
 }
+export function verticalLineWithoutActors(target: GridLocation): GridLocation[] {
+    if (!currentCombat) {
+        return [];
+    }
+    const [x] = target;
+    const targets: GridLocation[] = [];
+    for (let y = 0; y < currentCombat.height; y++) {
+        const spot: [number, number] = [x, y];
+        if (!getActorAtLocation(spot)) {
+            targets.push(spot);
+        }
+    }
+    return targets;
+}
 
 export function horizontalLine(target: GridLocation): GridLocation[] {
     if (!currentCombat) {
@@ -22,6 +36,21 @@ export function horizontalLine(target: GridLocation): GridLocation[] {
     const targets: GridLocation[] = [];
     for (let x = 0; x < currentCombat.width; x++) {
         targets.push([x, y]);
+    }
+    return targets;
+}
+
+export function horizontalLineWithoutActors(target: GridLocation): GridLocation[] {
+    if (!currentCombat) {
+        return [];
+    }
+    const [_, y] = target;
+    const targets: GridLocation[] = [];
+    for (let x = 0; x < currentCombat.width; x++) {
+        const spot: [number, number] = [x, y];
+        if (!getActorAtLocation(spot)) {
+            targets.push(spot);
+        }
     }
     return targets;
 }
