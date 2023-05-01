@@ -18,8 +18,10 @@ import { Clown } from "./enemies/clown";
 import { Howl } from "howler";
 import combatMusicPath from "~/assets/audio/battle final mix.mp3";
 
-const combatMusic1 = new Howl({ src: [combatMusicPath], volume: 0.2 });
-const combatMusic2 = new Howl({ src: [combatMusicPath], volume: 0.2 });
+const musicVolume = 0.08;
+
+const combatMusic1 = new Howl({ src: [combatMusicPath], volume: musicVolume });
+const combatMusic2 = new Howl({ src: [combatMusicPath], volume: musicVolume });
 let currentCombatMusic = combatMusic1;
 
 if (import.meta.env.DEV) {
@@ -132,21 +134,6 @@ export const combats = {
         startingSide: StartingSide.enemy,
     }),
 } as const;
-// 7x7 option
-// gridWidth: 7,
-// gridHeight: 7,
-// players: [Bear, Cassie, Frog],
-// playerLevel: 4,
-// enemies: [
-//     { type: "clown", x: 3, y: 1 },
-//     { type: "clown", x: 4, y: 2 },
-//     { type: "clown", x: 5, y: 3 },
-//     { type: "clown", x: 4, y: 4 },
-//     { type: "clown", x: 3, y: 5 },
-//     { type: "clown", x: 2, y: 4 },
-//     { type: "clown", x: 1, y: 3 },
-//     { type: "clown", x: 2, y: 2 },
-// ],
 
 export let currentCombat: CurrentCombat | undefined;
 interface CurrentCombat {
@@ -218,7 +205,7 @@ export function startCombat(combatName: Exclude<keyof typeof combats, "none">) {
     }
 
     currentCombatMusic.play();
-    currentCombatMusic.fade(0, 0.2, 300);
+    currentCombatMusic.fade(0, musicVolume, 300);
 
     updateCombatTimeAnimationFrame = requestAnimationFrame(updateGameTime);
     if (combatDescription.startingSide === StartingSide.enemy) {

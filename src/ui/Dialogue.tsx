@@ -85,7 +85,17 @@ function getSpeechConfigForSpeaker(speaker: Speaker): SpeechConfig | null {
         case "cattruck":
             return { baseRate: 0.9, sound: catSpeechSound };
         case "rat":
+            return { baseRate: 0.7, sound: basicSpeechSound };
+        case "bear":
+            return { baseRate: 0.3, sound: basicSpeechSound };
+        case "frog":
             return { baseRate: 0.6, sound: basicSpeechSound };
+        case "cop":
+            return { baseRate: 0.4, sound: basicSpeechSound };
+        case "clown":
+            return { baseRate: 0.8, sound: basicSpeechSound };
+        case "leslie":
+            return { baseRate: 0.5, sound: basicSpeechSound };
     }
 }
 

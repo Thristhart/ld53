@@ -21,6 +21,7 @@ import { animate } from "../animate";
 import { wait } from "~/util/wait";
 import { drawBarrier } from "./drawBarrier";
 import { Box } from "../enemies/box";
+import { emitExplosionParticle } from "../particles/explosion";
 
 const catSheet: SpriteSheet = {
     image: loadImage(catSheetPath),
@@ -109,8 +110,15 @@ const airMail: Action<GridLocation> = {
         return verticalLine(targetSquare);
     },
     async apply(targetSquares) {
-        damageEntitiesOnSquares(this, targetSquares, 10);
-        // TODO: animate explosions(?) on the back row
+        for (const square of targetSquares) {
+            const canvasPos = gridLocationToCanvas(...square);
+            emitExplosionParticle(
+                canvasPos[0] + (GRID_SQUARE_WIDTH / 2) * camera.scale,
+                canvasPos[1] + (GRID_SQUARE_HEIGHT / 2) * camera.scale
+            );
+            damageEntitiesOnSquares(this, [square], 10);
+            await wait(120);
+        }
     },
 };
 

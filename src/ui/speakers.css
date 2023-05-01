@@ -38,6 +38,57 @@ body:after {
 .speaker-portrait.rat.right-speaker {
     transform: unset;
 }
+.speaker-portrait.cop {
+    background-image: url("../assets/pigeon_walking-Sheet.png");
+    background-size: 400%;
+    animation: fourFrameAnimation 1s step-start;
+    animation-delay: 300ms;
+    transform: scaleX(-1);
+    height: 16em;
+    top: -9em;
+    width: 10em;
+    right: 2em;
+}
+.speaker-portrait.cop.right-speaker {
+    transform: unset;
+}
+.speaker-portrait.cop.left-speaker {
+    left: 2em;
+}
+.speaker-portrait.frog {
+    background-image: url("../assets/frog_idle_strip4.png");
+    background-size: 400%;
+    animation: fourFrameAnimation 1s step-start;
+    animation-delay: 300ms;
+    height: 10em;
+    top: -9em;
+}
+.speaker-portrait.clown {
+    background-image: url("../assets/clown_sheet.png");
+    background-size: 200%;
+    animation: twoFrameAnimation 1s step-start;
+    animation-delay: 300ms;
+    transform: scaleX(-1);
+    height: 16em;
+    top: -12em;
+    width: 14em;
+    right: 0em;
+}
+.speaker-portrait.clown.right-speaker {
+    transform: unset;
+}
+.speaker-portrait.clown.left-speaker {
+    left: 2em;
+}
+
+@keyframes twoFrameAnimation {
+    0.00% {
+        background-position-x: 0%;
+    }
+    50% {
+        background-position-x: 100%;
+    }
+}
 
 @keyframes fourFrameAnimation {
     0.00% {

@@ -12,11 +12,11 @@ cattruck: Not really, no.
 cop: Did you know this is a construction zone?
 cattruck: I mean, yeah. There's a bunch of signs and stuff.
 cop: Well, you were going 5 miles above the speed limit. In a construction zone.
-cattruck: Well, I have a very important delivery to be made! It's Leslie's birthday and I have her cake and all her presents.
+cattruck: Well, I have a very important delivery to make! It's Leslie's birthday and I have her cake and all her presents.
 #speaking:cattruck,frog
 frog: You headed to a birthday party?! That sure does sounds extra serious.
 #speaking:cop,frog
-cop: Can't you see we're in the middle of something here. Step back, sir.
+cop: Can't you see we're in the middle of something here? Step back, sir.
 frog: Jeez, get a load of this guy, huh? Maybe you didn't get enough birthdays in your life, pal.
 cop: Alright. That's it. Both of you up against the wall with your hands up.
 #speaking:cop,cattruck
