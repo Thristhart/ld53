@@ -102,6 +102,7 @@ export const combats = {
             { type: "clown", x: 1, y: 3 },
             { type: "clown", x: 0, y: 2 },
             { type: "clown", x: 1, y: 1 },
+            { type: "clown", x: 2, y: 2 },
         ],
         startingSide: StartingSide.enemy,
     }),

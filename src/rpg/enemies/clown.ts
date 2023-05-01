@@ -105,7 +105,7 @@ const laughterIsTheBestMedicine = {
         healTargets.forEach((targetLocation) => {
             const target = getActorAtLocation(targetLocation);
             if (target !== undefined) {
-                healActor(this, target, 5);
+                healActor(this, target, 10);
             }
         });
     },
@@ -115,8 +115,8 @@ export class Clown extends BaseEnemy {
     actions = [circusAct, lineUp, laughterIsTheBestMedicine] as const;
     displayName: string = "Clown";
     sheet: SpriteSheet | undefined;
-    static maxHP: number = 21;
-    static hp: number = 21;
+    static maxHP: number = 55;
+    static hp: number = 55;
     frameAnimation: FrameAnimation | undefined;
     draw(context: CanvasRenderingContext2D) {
         let frame: readonly [number, number];
