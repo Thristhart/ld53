@@ -164,7 +164,12 @@ const reversal: Action<Player> = {
     description:
         "BEARNAME protects the target, countering the next attack that would hit them, and returning the damage to the attacker.",
     targetType: "player",
-    targeting: singlePlayer,
+    targeting(player) {
+        if (player instanceof Bear) {
+            return [];
+        }
+        return [player];
+    },
     async apply(targets) {
         const bear = this as Bear;
 
