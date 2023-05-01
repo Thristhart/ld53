@@ -25,7 +25,7 @@ cattruck: And free cake?! Let's gooooo!
 Bushes behind Cassie begin to rustle.
 #speaking:rat,cattruck
 rat: Hey there, scamp! Hands off our cake!
-~ combat = "cops"
+~ combat = "tutorial"
 ~ shouldShowDialog = false
 #speaking:cat,
 cat: Now I can finally dig into this cake!

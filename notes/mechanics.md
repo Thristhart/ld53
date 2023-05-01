@@ -23,7 +23,9 @@ Mail Storm
 -   3 damage
 -   Do we diminish a supply?
 
-Quick Sort?
+Air Mail
+
+-   Deal 10 damage to the back row.
 
 Send off
 
@@ -46,6 +48,10 @@ Clear the Site
 Steel Beams
 
 -   3 wide Horizontal/Vertical line for 9 damage.
+
+Cordon Off
+
+-   Build a wall of cones in a horizontal/vertical line (Skipping over enemy spaces.)
 
 ## Kiryu (Dad)
 
@@ -94,6 +100,24 @@ Abilities: (Maybe some AI, I'll think on it)
     -   Move forward 3.
 
 ## Clown
+
+21hp
+
+## Moves
+
+Something something syncronised swimming?
+
+Movement ability, esoteric
+Circus Act
+Randomly move 1-2 spaces orthagonally/diagonally in a direction.
+
+Damage ability, to do with rows/columns
+Line Up
+Consume the actions of all unexhausted clowns in randomly, row/column, to deal damage equal to the number of used actions squared.
+
+Healing ability, adjacency, Orthagonal/Diagonal
+Laughter is the very best medicine
+Heal 5 to each adjacent clown (randomly Orthagonal/Diagonal)
 
 # Combats
 

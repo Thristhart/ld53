@@ -6,4 +6,4 @@ INCLUDE ending.ink
 VAR shouldShowDialog = true
 VAR combat = "none"
 
--> clowns
+-> intro
