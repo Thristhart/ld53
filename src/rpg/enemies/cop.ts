@@ -3,17 +3,18 @@ import copShootSheetPath from "~/assets/pigeon_shoot_sheet.png";
 import { randomFromArray } from "~/util/randomFromArray";
 import { damagePlayer } from "../actionUtil";
 import { Actor } from "../actor";
-import { FrameAnimation, makeFrameAnimation } from "../animation";
+import { FrameAnimation, PositionAnimation, makeFrameAnimation, makeLerpAnimation } from "../animation";
 import { Player } from "../basePlayer";
 import { combatTime, currentCombat, lastNPCLog, performNPCAction } from "../combat";
 import { SpriteSheet, drawSprite } from "../drawSprite";
 import { loadImage } from "../loadImage";
-import { GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH, gridLocationToCanvas } from "../render";
-import { singlePlayer } from "../targetShapes";
+import { GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH, gridLocationToCanvas, gridLocationToCenter } from "../render";
+import { singleGridLocation, singlePlayer } from "../targetShapes";
 import { BaseEnemy } from "./baseEnemy";
 import { animate } from "../animate";
 import { emitHandcuffParticle } from "../particles/handcuffs";
 import { wait } from "~/util/wait";
+import { GridLocation } from "../action";
 
 const copSheet: SpriteSheet = {
     image: loadImage(copSheetPath),
@@ -89,10 +90,45 @@ const handcuff = {
     },
 } as const;
 
+const runDown = {
+    id: "runDown",
+    name: "Run Down",
+    description: "Cop charges forward 2 spaces",
+    targetType: "grid",
+    targeting: singleGridLocation,
+    async apply(this: Actor, targets: GridLocation[]) {
+        const cop = this as Cop;
+        lastNPCLog.value = `Cop charges forward 2 spaces`;
+        const animations: PositionAnimation[] = [];
+        const target = {x: Math.max(0, cop.x - 2), y: cop.y}
+        const distance = cop.x - target.x;
+        cop.positionAnimation = makeLerpAnimation(
+            gridLocationToCenter([cop.x, cop.y]),
+            gridLocationToCenter([target.x, target.y]),
+            distance * 150,
+            undefined,
+            () => {}
+        );
+        animations.push(cop.positionAnimation);
+
+        cop.x = target.x;
+        cop.y = target.y;
+        // TODO: Actually do the animation somehow?
+    },
+    animation: {
+        async animate(this: Actor, target: GridLocation) {
+
+            await wait(400);
+        },
+    },
+} as const;
+
 export class Cop extends BaseEnemy {
-    actions = [shoot, handcuff] as const;
+    actions = [shoot, handcuff, runDown] as const;
     displayName: string = "Copidgeon";
     sheet: SpriteSheet | undefined;
+    static maxHP: number = 28;
+    static hp: number = 28;
     frameAnimation: FrameAnimation | undefined;
     draw(context: CanvasRenderingContext2D) {
         let frame: readonly [number, number];
@@ -135,6 +171,9 @@ export class Cop extends BaseEnemy {
         }
         if (action.id === "shoot") {
             return performNPCAction(this, action, randomFromArray(currentCombat!.players));
+        }
+        else if (action.id === "runDown") {
+            return performNPCAction(this, action, [this.x-2, this.y]);
         }
     }
 }
