@@ -82,7 +82,13 @@ const sendOff: Action<GridLocation> = {
     name: "Send Off",
     description: "Cassie packages the target up into a box for three turns.",
     targetType: "grid",
-    targeting: singleGridLocationWithEnemy,
+    targeting(targetSquare) {
+        const actor = getActorAtLocation(targetSquare);
+        if (actor && !(actor instanceof Box)) {
+            return [targetSquare];
+        }
+        return [];
+    },
     async apply(targetSquares) {
         const victim = getActorAtLocation(targetSquares[0]);
         const box = new Box(victim);
