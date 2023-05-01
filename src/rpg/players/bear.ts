@@ -228,7 +228,7 @@ const finisher: Action<GridLocation> = {
     id: "finisher",
     name: "Heat Finisher",
     description: "Walker savages the target, dealing an incredible amount of damage. Two turn cooldown.",
-    cooldown: 2,
+    cooldown: 3,
     targetType: "grid",
     targeting: singleGridLocationWithEnemy,
     async apply(targets) {
