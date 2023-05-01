@@ -75,9 +75,7 @@ export const combats = {
         players: [Cassie],
         playerLevel: 2,
         enemies: [
-            { type: "rat", x: 0, y: 1 },
             { type: "rat", x: 0, y: 2 },
-            { type: "rat", x: 0, y: 3 },
             { type: "rat", x: 1, y: 1 },
             { type: "rat", x: 1, y: 3 },
             { type: "rat", x: 2, y: 1 },
