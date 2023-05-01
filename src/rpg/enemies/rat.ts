@@ -13,6 +13,11 @@ import { GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH } from "../render";
 import { emptyCardinalSquares, singlePlayer } from "../targetShapes";
 import { BaseEnemy } from "./baseEnemy";
 
+import ratSpawnSoundPath from "~/assets/audio/rat_spawn.mp3";
+import { Howl } from "howler";
+
+const ratSpawnSound = new Howl({ src: ratSpawnSoundPath, volume: 0.01 });
+
 const ratSheet: SpriteSheet = {
     image: loadImage(ratSheetPath),
     spriteWidth: 42,
@@ -68,6 +73,7 @@ const screech = {
                 ],
                 66
             );
+            ratSpawnSound.play();
             await animate(rat.frameAnimation.tick, rat.frameAnimation.timePerFrame * rat.frameAnimation.frames.length);
             rat.frameAnimation = undefined;
         },

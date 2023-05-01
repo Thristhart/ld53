@@ -16,6 +16,13 @@ import { GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH, gridLocationToCanvas, gridLocati
 import { singleGridLocation, singlePlayer } from "../targetShapes";
 import { BaseEnemy } from "./baseEnemy";
 
+import copShootSoundPath from "~/assets/audio/cop_gun.mp3";
+import copSirenSoundPath from "~/assets/audio/cop_siren_short.mp3";
+import { Howl } from "howler";
+
+const copShootSound = new Howl({ src: copShootSoundPath, volume: 0.1 });
+const copSirenSound = new Howl({ src: copSirenSoundPath, volume: 0.1 });
+
 const copSheet: SpriteSheet = {
     image: loadImage(copSheetPath),
     spriteWidth: 32,
@@ -41,6 +48,8 @@ const shoot = {
     animation: {
         async animate(this: Actor, target: Player) {
             const cop = this as Cop;
+            copShootSound.play();
+            await wait(100);
             cop.frameAnimation = makeFrameAnimation(
                 [
                     [0, 0],
@@ -71,13 +80,15 @@ const handcuff = {
     targeting: singlePlayer,
     async apply(this: Actor, targets: Player[]) {
         let targetAbility = randomFromArray(
-            targets[0].actions.filter((a) => targets[0].cooldowns.get(a as any) ?? 0 > 0)
+            targets[0].actions.filter((a) => (targets[0].cooldowns.get(a as any) ?? 0) === 0)
         );
         lastNPCLog.value = `Cop locks down ${targets[0].displayName}, preventing them from using ${targetAbility.name}`;
         targets[0].cooldowns.set(targetAbility as any, 2);
     },
     animation: {
         async animate(this: Actor, target: Player) {
+            copSirenSound.play();
+            await wait(500);
             const cop = this as Cop;
             const myPos = gridLocationToCanvas(cop.x, cop.y);
             const targetPos = target.getVisiblePosition();

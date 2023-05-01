@@ -34,6 +34,11 @@ import {
 } from "../targetShapes";
 import { BaseEnemy } from "./baseEnemy";
 
+import laughSoundPath from "~/assets/audio/clown_honk_laugh.mp3";
+import { Howl } from "howler";
+
+const laughSound = new Howl({ src: laughSoundPath, volume: 0.05 });
+
 const clownSheet: SpriteSheet = {
     image: loadImage(clownSheetPath),
     spriteWidth: 38,
@@ -134,6 +139,7 @@ const laughterIsTheBestMedicine = {
     targetType: "grid",
     targeting: singleGridLocation,
     async apply(this: Actor, targets: GridLocation[]) {
+        laughSound.play();
         const centerpoint = targets[0];
         const mode = randomFromArray([LaughterDirection.Diagonal, LaughterDirection.Orthagonal]);
         const healTargets =
@@ -181,7 +187,9 @@ export class Clown extends BaseEnemy {
             (loc) => (isOrthagonal(myLoc, loc) || isDiagonal(myLoc, loc)) && canMove(myLoc, loc)
         );
 
-        const healTargets = cardinalSquares(myLoc).concat(diagonalSquares(myLoc)).filter(isActorAtLocation);
+        const healTargets = cardinalSquares(myLoc)
+            .concat(diagonalSquares(myLoc))
+            .filter((loc) => getActorsAtLocation(loc).some((actor) => actor instanceof Clown));
 
         const verticalAllies = getLineupTargetsInDirection(this, "vertical");
         const horizontalAllies = getLineupTargetsInDirection(this, "horizontal");

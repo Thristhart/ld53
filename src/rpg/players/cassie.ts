@@ -59,8 +59,10 @@ const runDown: Action<GridLocation> = {
             if (distanceIndex !== lastDrivenOverIndex) {
                 const locationDrivenOver = targetSquares[distanceIndex];
                 damageEntitiesOnSquares(this, [locationDrivenOver], 5);
-                const fire = new Fire(locationDrivenOver[0], locationDrivenOver[1]);
-                currentCombat?.entities.push(fire);
+                if (!getActorsAtLocation(locationDrivenOver).some((actor) => actor instanceof Fire)) {
+                    const fire = new Fire(locationDrivenOver[0], locationDrivenOver[1]);
+                    currentCombat?.entities.push(fire);
+                }
                 lastDrivenOverIndex = distanceIndex;
             }
         }, driveAnimation.duration);
