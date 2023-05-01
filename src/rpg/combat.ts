@@ -219,6 +219,14 @@ function getSortedEntityTurns(entities: BaseEntity[]) {
     });
 }
 
+export function skipActorTurn(actor: Actor) {
+    actorsWhoHaveActedThisRound.add(actor);
+}
+
+export function hasActorActed(actor: Actor) {
+    return actorsWhoHaveActedThisRound.has(actor);
+}
+
 export function nextTurn() {
     if (!currentCombat) {
         return;
@@ -368,7 +376,6 @@ export async function damageActor(from: Actor, target: Actor, damage: number) {
     }
     checkVictoryOrDefeat();
 }
-
 
 export async function healActor(from: Actor, target: Actor, heal: number) {
     const maxHeal = target.maxHP - target.hp;
