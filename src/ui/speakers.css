@@ -80,6 +80,18 @@ body:after {
 .speaker-portrait.clown.left-speaker {
     left: 2em;
 }
+.speaker-portrait.leslie {
+    background-image: url("../assets/bear_cub.png");
+    background-size: 100%;
+    animation-delay: 300ms;
+    height: 16em;
+    top: -12em;
+    width: 14em;
+    right: 0em;
+}
+.speaker-portrait.leslie.left-speaker {
+    left: 2em;
+}
 
 @keyframes twoFrameAnimation {
     0.00% {

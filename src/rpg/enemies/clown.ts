@@ -12,7 +12,6 @@ import {
     getActorsAtLocation,
     hasActorActed,
     healActor,
-    isActorAtLocation,
     lastNPCLog,
     performNPCAction,
     skipActorTurn,
@@ -34,8 +33,8 @@ import {
 } from "../targetShapes";
 import { BaseEnemy } from "./baseEnemy";
 
-import laughSoundPath from "~/assets/audio/clown_honk_laugh.mp3";
 import { Howl } from "howler";
+import laughSoundPath from "~/assets/audio/clown_honk_laugh.mp3";
 
 const laughSound = new Howl({ src: laughSoundPath, volume: 0.05 });
 

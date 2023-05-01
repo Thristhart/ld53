@@ -3,6 +3,7 @@
 #speaking:cattruck,
 cattruck: Ok, Cassie, you gotta make sure you get there before the party's over.
 cattruck: Traffic isn't that bad, so I'm making good time.
+#sound:siren
 Red and blue lights flash behind Cassie.
 cattruck: Noooooo. C'mon...
 Cassie pulls over to the side of the road.

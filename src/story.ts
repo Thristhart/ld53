@@ -4,6 +4,18 @@ import { renderUI } from "~/ui/ui";
 import { Story } from "inkjs/engine/Story";
 import { BoolValue, StringValue } from "inkjs/engine/Value";
 
+import laughSoundPath from "~/assets/audio/clown_honk_laugh.mp3";
+import copSirenSoundPath from "~/assets/audio/cop_siren_short.mp3";
+import ratSpawnSoundPath from "~/assets/audio/rat_spawn.mp3";
+
+import { Howl } from "howler";
+
+const sounds: { [key: string]: Howl } = {
+    screech: new Howl({ src: ratSpawnSoundPath, volume: 0.01 }),
+    laugh: new Howl({ src: laughSoundPath, volume: 0.05 }),
+    siren: new Howl({ src: copSirenSoundPath, volume: 0.1 }),
+};
+
 let story = new Story(storyContent);
 
 if (import.meta.env.DEV) {
@@ -69,6 +81,12 @@ function parseCurrentText() {
             if (tag.startsWith("bg:")) {
                 const newBg = tag.split("bg:")[1];
                 document.body.dataset.bg = newBg;
+            }
+            if (tag.startsWith("sound:")) {
+                const sound = tag.split("sound:")[1];
+                if (sound in sounds) {
+                    sounds[sound].play();
+                }
             }
         });
     }

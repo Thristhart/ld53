@@ -7,6 +7,7 @@ frog: What da heck is goin' on?!
 #speaking:bear,
 bear: Get out of here. You're disturbing everyone.
 #speaking:bear,clown
+#sound:laugh
 clown: You thought you could get away with it, huh?!
 bear: What?
 clown: No birthday party happens around here without The Birthday Troupe being involved.
