@@ -4,8 +4,7 @@
 
 -   [ ] Cassie abilities
 -   [ ] Construction worker ally
--   [ ] ??? ally
--   [ ] Dad ally
+-   [x] Dad ally
 
 -   [ ] Intro writing
 -   [ ] Between tutorial and pigeon cop fight writing
