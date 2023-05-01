@@ -97,6 +97,7 @@ export const combats = {
         enemies: [
             { type: "cop", x: 2, y: 2 },
             { type: "cop", x: 0, y: 1 },
+            { type: "cop", x: 3, y: 2 },
             { type: "cop", x: 4, y: 4 },
         ],
         startingSide: StartingSide.enemy,
