@@ -137,7 +137,7 @@ const runDown = {
 
 export class Cop extends BaseEnemy {
     actions = [shoot, handcuff, runDown] as const;
-    displayName: string = "Copidgeon";
+    displayName: string = "Cop";
     sheet: SpriteSheet | undefined;
     static maxHP: number = 28;
     static hp: number = 28;
