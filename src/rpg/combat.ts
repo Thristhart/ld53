@@ -14,6 +14,7 @@ import { Cassie } from "./players/cassie";
 import { Frog } from "./players/frog";
 import { Cop } from "./enemies/cop";
 import { Bear } from "./players/bear";
+import { Clown } from "./enemies/clown";
 
 interface EnemyDescription {
     type: EnemyType;
@@ -93,18 +94,33 @@ export const combats = {
         players: [Bear, Cassie, Frog],
         playerLevel: 4,
         enemies: [
-            { type: "cop", x: 2, y: 0 },
-            { type: "cop", x: 3, y: 1 },
-            { type: "cop", x: 2, y: 2 },
-            { type: "cop", x: 3, y: 3 },
-            { type: "cop", x: 2, y: 4 },
-            { type: "cop", x: 1, y: 3 },
-            { type: "cop", x: 0, y: 2 },
-            { type: "cop", x: 1, y: 1 },
+            { type: "clown", x: 2, y: 0 },
+            { type: "clown", x: 3, y: 1 },
+            { type: "clown", x: 4, y: 2 },
+            { type: "clown", x: 3, y: 3 },
+            { type: "clown", x: 2, y: 4 },
+            { type: "clown", x: 1, y: 3 },
+            { type: "clown", x: 0, y: 2 },
+            { type: "clown", x: 1, y: 1 },
         ],
         startingSide: StartingSide.player,
     }),
 } as const;
+// 7x7 option
+// gridWidth: 7,
+// gridHeight: 7,
+// players: [Bear, Cassie, Frog],
+// playerLevel: 4,
+// enemies: [
+//     { type: "clown", x: 3, y: 1 },
+//     { type: "clown", x: 4, y: 2 },
+//     { type: "clown", x: 5, y: 3 },
+//     { type: "clown", x: 4, y: 4 },
+//     { type: "clown", x: 3, y: 5 },
+//     { type: "clown", x: 2, y: 4 },
+//     { type: "clown", x: 1, y: 3 },
+//     { type: "clown", x: 2, y: 2 },
+// ],
 
 export let currentCombat: CurrentCombat | undefined;
 interface CurrentCombat {
@@ -134,6 +150,9 @@ export function createEnemy(enemyDesc: EnemyDescription) {
     }
     if (enemyDesc.type === "cop") {
         return new Cop(enemyDesc.x, enemyDesc.y);
+    }
+    if (enemyDesc.type === "clown") {
+        return new Clown(enemyDesc.x, enemyDesc.y);
     }
     throw "Unimplemented enemyType";
 }

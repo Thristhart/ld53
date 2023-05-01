@@ -1,4 +1,4 @@
-import clownSheetPath from "~/assets/pigeon_walking-Sheet.png";
+import clownSheetPath from "~/assets/clown_sheet.png";
 import { randomFromArray } from "~/util/randomFromArray";
 import { damagePlayer } from "../actionUtil";
 import { Actor } from "../actor";
@@ -17,8 +17,8 @@ import { GridLocation } from "../action";
 
 const clownSheet: SpriteSheet = {
     image: loadImage(clownSheetPath),
-    spriteWidth: 32,
-    spriteHeight: 36,
+    spriteWidth: 38,
+    spriteHeight: 38,
 };
 
 const circusAct = {
@@ -31,29 +31,6 @@ const circusAct = {
         // const cop = this as Clown;
         // lastNPCLog.value = `Clown does a funny walk`;
         // damagePlayer(this, targets[0], 10 - cop.x);
-    },
-    animation: {
-        async animate(this: Actor, target: GridLocation) {
-            // const cop = this as Cop;
-            // cop.frameAnimation = makeFrameAnimation(
-            //     [
-            //         [0, 0],
-            //         [1, 0],
-            //         [2, 0],
-            //         [3, 0],
-            //     ],
-            //     75,
-            //     undefined,
-            //     () => {
-            //         cop.frameAnimation = undefined;
-            //         cop.sheet = undefined;
-            //     }
-            // );
-            // cop.sheet = clownShootSheet;
-            // await animate((dt) => {
-            //     cop.frameAnimation?.tick(dt);
-            // }, 300);
-        },
     },
 } as const;
 
@@ -79,7 +56,6 @@ const lineUp = {
             //     targetPos[0],
             //     targetPos[1]
             // );
-
             // await wait(400);
         },
     },
@@ -94,7 +70,6 @@ const laughterIsTheBestMedicine = {
     async apply(this: Actor, targets: GridLocation[]) {
         // const cop = this as Clown;
         // lastNPCLog.value = `Cop charges forward 2 spaces`;
-
         // // try to move left twice
         // const target: GridLocation = [cop.x - 1, cop.y];
         // if (target[0] < 0 || getActorAtLocation(target)) {
@@ -118,7 +93,6 @@ const laughterIsTheBestMedicine = {
         //     }
         // );
         // await animate(cop.positionAnimation.tick, cop.positionAnimation.duration);
-
         // cop.x = target[0];
         // cop.y = target[1];
     },
@@ -156,43 +130,5 @@ export class Clown extends BaseEnemy {
         });
         super.draw(context);
     }
-    async doTurn(): Promise<void> {
-        const playersWithValidHandcuffTargets = currentCombat!.players.filter((player) => {
-            let abilitiesWithoutCooldown = 0;
-            for (const cooldown of player.cooldowns.values()) {
-                if (cooldown === 0) {
-                    abilitiesWithoutCooldown++;
-                }
-            }
-            return abilitiesWithoutCooldown > 1;
-        });
-
-        const validActions = this.actions.filter((action) => {
-            if (action.id === "handcuff") {
-                if (playersWithValidHandcuffTargets.length === 0) {
-                    return false;
-                }
-            }
-            if (action.id === "runDown") {
-                // don't charge forward if there's no spaces to the left
-                if (this.x === 0) {
-                    return false;
-                }
-                const leftOne: GridLocation = [this.x - 1, this.y];
-                if (getActorAtLocation(leftOne)) {
-                    return false;
-                }
-            }
-            return true;
-        });
-        let action = randomFromArray(validActions);
-        if (action.id === "handcuff") {
-            return performNPCAction(this, action, randomFromArray(playersWithValidHandcuffTargets));
-        }
-        if (action.id === "shoot") {
-            return performNPCAction(this, action, randomFromArray(currentCombat!.players));
-        } else if (action.id === "runDown") {
-            return performNPCAction(this, action, [this.x - 2, this.y]);
-        }
-    }
+    async doTurn(): Promise<void> {}
 }

@@ -1,5 +1,7 @@
 === intro ===
 #bg:forest
+~ combat = "clowns"
+~ shouldShowDialog = false
 cat: — and then I lost the hat! Can you believe it?
 cat: Hello?
 cat: Crow?
