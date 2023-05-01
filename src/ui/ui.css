@@ -24,6 +24,13 @@
     flex-direction: column;
     backdrop-filter: blur(10px);
     background-color: rgba(0, 0, 136, 0.164);
+
+    font-size: var(--dialogue-font-size);
+    font-family: var(--dialogue-font-family);
+    color: white;
+}
+#titleScreen a {
+    color: white;
 }
 #logo {
     font-size: calc(var(--dialogue-font-size) * 5);

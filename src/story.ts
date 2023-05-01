@@ -1,6 +1,6 @@
 import storyContent from "~/ink/main.ink";
 import { combats, endCombat, startCombat } from "~/rpg/combat";
-import { renderUI } from "~/ui/ui";
+import { renderUI, showingCredits } from "~/ui/ui";
 import { Story } from "inkjs/engine/Story";
 import { BoolValue, StringValue } from "inkjs/engine/Value";
 
@@ -119,6 +119,8 @@ export const continueStory = () => {
             choices: story.currentChoices.map((choice) => ({ ...getSpeaker(choice.text), index: choice.index })),
         };
         didContinue = true;
+    } else {
+        showingCredits.value = true;
     }
     renderUI();
     return didContinue;
