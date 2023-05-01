@@ -80,7 +80,7 @@ const mailStorm: Action<GridLocation> = {
 const sendOff: Action<GridLocation> = {
     id: "sendOff",
     name: "Send Off",
-    description: "Cassie packages the target up into a box for three turns.",
+    description: "Cassie packages the target into a box for three turns.",
     targetType: "grid",
     targeting(targetSquare) {
         const actor = getActorAtLocation(targetSquare);
