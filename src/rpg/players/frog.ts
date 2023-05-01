@@ -11,9 +11,17 @@ import { combatTime, currentCombat, damageEntity, getActorAtLocation } from "../
 import { drawCenteredText } from "../drawCenteredText";
 import { SpriteSheet, drawSprite } from "../drawSprite";
 import { loadImage } from "../loadImage";
-import { PLAYER_DRAW_HEIGHT, PLAYER_DRAW_WIDTH, gridLocationToCenter } from "../render";
-import { allPlayers, fullGrid, horizontalLineWithLength, verticalLineWithLength } from "../targetShapes";
+import { GRID_SQUARE_HEIGHT, PLAYER_DRAW_HEIGHT, PLAYER_DRAW_WIDTH, gridLocationToCenter } from "../render";
+import {
+    allPlayers,
+    fullGrid,
+    horizontalLineWithLength,
+    horizontalLineWithoutActors,
+    verticalLineWithLength,
+    verticalLineWithoutActors,
+} from "../targetShapes";
 import { drawBarrier } from "./drawBarrier";
+import { Cone } from "../entities/cone";
 
 const frogSheet: SpriteSheet = {
     image: loadImage(frogSheetPath),
@@ -140,11 +148,38 @@ const steelBeams: Action<GridLocation> = {
     // TODO: animate steel beam
 };
 
+const cordonOff: Action<GridLocation> = {
+    id: "cordonOff",
+    name: "Cordon Off",
+    description: "FROGNAME drops a line of cones, preventing movement.",
+    targetType: "grid",
+    targeting(target, targetOption) {
+        if (targetOption === "Vertical") {
+            return verticalLineWithoutActors(target);
+        } else if (targetOption === "Horizontal") {
+            return horizontalLineWithoutActors(target);
+        }
+        return [];
+    },
+    targetOptions: ["Vertical", "Horizontal"],
+    async apply(targetSquares, targetOption) {
+        await Promise.all(
+            targetSquares.map((square) => {
+                const cone = new Cone(square[0], square[1]);
+                const above = gridLocationToCenter([square[0], square[1] - 2]);
+                cone.positionAnimation = makeLerpAnimation(above, gridLocationToCenter(square), 300);
+                currentCombat?.entities.push(cone);
+                return animate(cone.positionAnimation.tick, cone.positionAnimation.duration);
+            })
+        );
+    },
+};
+
 export class Frog extends Player {
     displayName: string = "Frog";
     static baseHP = 20;
-    static hpPerLevel = 10;
-    static actions = [steelBeams, makeshiftWall, clearTheSite];
+    static hpPerLevel = 6;
+    static actions = [steelBeams, makeshiftWall, clearTheSite, cordonOff];
     sheet: SpriteSheet | undefined;
     frameAnimation: FrameAnimation | undefined;
     draw(context: CanvasRenderingContext2D, x: number, y: number, isTargeted: boolean): void {

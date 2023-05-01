@@ -13,7 +13,7 @@ import {
     camera,
     gridLocationToCanvas,
 } from "../render";
-import { horizontalLine, singleGridLocationWithEnemy, square } from "../targetShapes";
+import { horizontalLine, singleGridLocationWithEnemy, square, verticalLine } from "../targetShapes";
 import { PositionAnimation, makeLerpAnimation } from "../animation";
 import { currentCombat, getActorAtLocation } from "../combat";
 import { mailStormParticles } from "../particles/mail";
@@ -80,9 +80,15 @@ const mailStorm: Action<GridLocation> = {
 const sendOff: Action<GridLocation> = {
     id: "sendOff",
     name: "Send Off",
-    description: "Cassie packages the target up into a box for three turns.",
+    description: "Cassie packages the target into a box for three turns.",
     targetType: "grid",
-    targeting: singleGridLocationWithEnemy,
+    targeting(targetSquare) {
+        const actor = getActorAtLocation(targetSquare);
+        if (actor && !(actor instanceof Box)) {
+            return [targetSquare];
+        }
+        return [];
+    },
     async apply(targetSquares) {
         const victim = getActorAtLocation(targetSquares[0]);
         const box = new Box(victim);
@@ -91,11 +97,28 @@ const sendOff: Action<GridLocation> = {
     },
 };
 
+const airMail: Action<GridLocation> = {
+    id: "airMail",
+    name: "Air Mail",
+    description: "Cassie delivers a devestating blow to the back column.",
+    targetType: "grid",
+    targeting(targetSquare) {
+        if (targetSquare[0] !== currentCombat!.width - 1) {
+            return [];
+        }
+        return verticalLine(targetSquare);
+    },
+    async apply(targetSquares) {
+        damageEntitiesOnSquares(this, targetSquares, 10);
+        // TODO: animate explosions(?) on the back row
+    },
+};
+
 export class Cassie extends Player {
     displayName: string = "Cassie";
     static baseHP = 15;
     static hpPerLevel = 5;
-    static actions = [runDown, mailStorm, sendOff];
+    static actions = [runDown, mailStorm, airMail, sendOff];
     draw(context: CanvasRenderingContext2D, x: number, y: number, isTargeted: boolean): void {
         super.draw(context, x, y, isTargeted);
         const spriteAspectRatio = catSheet.spriteHeight / catSheet.spriteWidth;

@@ -80,6 +80,7 @@ const suplex: Action<GridLocation> = {
             await animate(target.positionAnimation.tick, target.positionAnimation.duration);
         }
 
+        damageEntity(bear, target, 7);
         if (actorAlreadyAtSquare) {
             damageEntity(bear, target, 7);
             damageEntity(bear, actorAlreadyAtSquare, 7);
@@ -164,7 +165,12 @@ const reversal: Action<Player> = {
     description:
         "BEARNAME protects the target, countering the next attack that would hit them, and returning the damage to the attacker.",
     targetType: "player",
-    targeting: singlePlayer,
+    targeting(player) {
+        if (player instanceof Bear) {
+            return [];
+        }
+        return [player];
+    },
     async apply(targets) {
         const bear = this as Bear;
 
@@ -243,8 +249,8 @@ const finisher: Action<GridLocation> = {
 
 export class Bear extends Player {
     displayName: string = "Bear";
-    static baseHP = 20;
-    static hpPerLevel = 10;
+    static baseHP = 12;
+    static hpPerLevel = 8;
     static actions = [suplex, throwBike, reversal, finisher];
     constructor(level: number) {
         super(level);

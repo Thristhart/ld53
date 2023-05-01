@@ -1,15 +1,15 @@
--   [ ] Finalize rat fight
--   [ ] Pigeon/cop fight
--   [ ] Clown fight
+-   [x] Finalize rat fight
+-   [x] Pigeon/cop fight
+-   [x] Clown fight
 
--   [ ] Cassie abilities
--   [ ] Construction worker ally
+-   [x] Cassie abilities
+-   [x] Construction worker ally
 -   [x] Dad ally
 
--   [ ] Intro writing
--   [ ] Between tutorial and pigeon cop fight writing
--   [ ] Between cop and clown fight writing
+-   [x] Intro writing
+-   [x] Between tutorial and pigeon cop fight writing
+-   [x] Between cop and clown fight writing
 -   [ ] Conclusion writing
 
--   [ ] Integrate battle music
+-   [x] Integrate battle music
 -   [ ] Maybe: sound effects

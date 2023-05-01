@@ -13,6 +13,35 @@ export function verticalLine(target: GridLocation): GridLocation[] {
     }
     return targets;
 }
+export function verticalLineWithoutActors(target: GridLocation): GridLocation[] {
+    if (!currentCombat) {
+        return [];
+    }
+    const [x] = target;
+    const targets: GridLocation[] = [];
+    for (let y = 0; y < currentCombat.height; y++) {
+        const spot: [number, number] = [x, y];
+        if (!getActorAtLocation(spot)) {
+            targets.push(spot);
+        }
+    }
+    return targets;
+}
+
+export function verticalLineWithActors(target: GridLocation): GridLocation[] {
+    if (!currentCombat) {
+        return [];
+    }
+    const [x] = target;
+    const targets: GridLocation[] = [];
+    for (let y = 0; y < currentCombat.height; y++) {
+        const spot: [number, number] = [x, y];
+        if (getActorAtLocation(spot)) {
+            targets.push(spot);
+        }
+    }
+    return targets;
+}
 
 export function horizontalLine(target: GridLocation): GridLocation[] {
     if (!currentCombat) {
@@ -22,6 +51,36 @@ export function horizontalLine(target: GridLocation): GridLocation[] {
     const targets: GridLocation[] = [];
     for (let x = 0; x < currentCombat.width; x++) {
         targets.push([x, y]);
+    }
+    return targets;
+}
+
+export function horizontalLineWithoutActors(target: GridLocation): GridLocation[] {
+    if (!currentCombat) {
+        return [];
+    }
+    const [_, y] = target;
+    const targets: GridLocation[] = [];
+    for (let x = 0; x < currentCombat.width; x++) {
+        const spot: [number, number] = [x, y];
+        if (!getActorAtLocation(spot)) {
+            targets.push(spot);
+        }
+    }
+    return targets;
+}
+
+export function horizontalLineWithActors(target: GridLocation): GridLocation[] {
+    if (!currentCombat) {
+        return [];
+    }
+    const [_, y] = target;
+    const targets: GridLocation[] = [];
+    for (let x = 0; x < currentCombat.width; x++) {
+        const spot: [number, number] = [x, y];
+        if (getActorAtLocation(spot)) {
+            targets.push(spot);
+        }
     }
     return targets;
 }
@@ -64,6 +123,35 @@ export function square(target: GridLocation, size: number): GridLocation[] {
         }
     }
     return targets;
+}
+
+export function isOrthagonal(from: GridLocation, to: GridLocation): boolean {
+    const dx = to[0] - from[0];
+    const dy = to[1] - from[1];
+    return !(dx && dy);
+}
+export function isDiagonal(from: GridLocation, to: GridLocation): boolean {
+    const dx = to[0] - from[0];
+    const dy = to[1] - from[1];
+    return Math.abs(dx) === Math.abs(dy);
+}
+
+export function canMove(from: GridLocation, to: GridLocation): boolean {
+    if (getActorAtLocation(to)) {
+        return false;
+    }
+    const dx = to[0] - from[0];
+    const dy = to[1] - from[1];
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const unit = [dx / distance, dy / distance];
+    let considering: GridLocation = [Math.round(from[0] + unit[0]), Math.round(from[1] + unit[1])];
+    while (considering[0] !== to[0] || considering[1] !== to[1]) {
+        if (getActorAtLocation(considering)) {
+            return false;
+        }
+        considering = [Math.round(considering[0] + unit[0]), Math.round(considering[1] + unit[1])];
+    }
+    return true;
 }
 
 export function singlePlayer(target: Player): [Player] {
@@ -116,6 +204,35 @@ export function cardinalSquares(target: GridLocation): GridLocation[] {
     if (y < currentCombat.height - 1) {
         cardinals.push([x, y + 1]);
     }
+    return cardinals;
+}
+
+export function diagonalSquares(target: GridLocation): GridLocation[] {
+    if (!currentCombat) {
+        return [];
+    }
+
+    const cardinals: GridLocation[] = [];
+    const [x, y] = target;
+
+    const touchingTopBorder = y <= 0;
+    const touchingLeftBorder = x <= 0;
+    const touchingBottomBorder = y >= currentCombat.height - 1;
+    const touchingRightBorder = x >= currentCombat.width - 1;
+
+    if (!touchingLeftBorder && !touchingTopBorder) {
+        cardinals.push([x - 1, y - 1]);
+    }
+    if (!touchingRightBorder && !touchingTopBorder) {
+        cardinals.push([x + 1, y - 1]);
+    }
+    if (!touchingRightBorder && !touchingBottomBorder) {
+        cardinals.push([x + 1, y + 1]);
+    }
+    if (!touchingLeftBorder && !touchingBottomBorder) {
+        cardinals.push([x - 1, y + 1]);
+    }
+
     return cardinals;
 }
 
