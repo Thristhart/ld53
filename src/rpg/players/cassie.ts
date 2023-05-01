@@ -68,7 +68,7 @@ const mailStorm: Action<GridLocation> = {
         return square(target, 1);
     },
     async apply(targetSquares) {
-        damageEntitiesOnSquares(this, targetSquares, 3);
+        damageEntitiesOnSquares(this, targetSquares, 5);
     },
     animation: {
         async animate(target: GridLocation) {

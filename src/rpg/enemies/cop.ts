@@ -70,7 +70,7 @@ const handcuff = {
     targetType: "player",
     targeting: singlePlayer,
     async apply(this: Actor, targets: Player[]) {
-        let targetAbility = randomFromArray(targets[0].actions);
+        let targetAbility = randomFromArray(targets[0].actions.filter(a => targets[0].cooldowns.get(a as any) ?? 0 > 0));
         lastNPCLog.value = `Cop locks down ${targets[0].displayName}, preventing them from using ${targetAbility.name}`;
         targets[0].cooldowns.set(targetAbility as any, 2);
     },

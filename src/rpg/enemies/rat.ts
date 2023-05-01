@@ -87,7 +87,17 @@ export class Rat extends BaseEnemy {
         super.draw(context);
     }
     async doTurn(): Promise<void> {
-        const action = randomFromArray(this.actions);
+        const myLoc: GridLocation = [this.x, this.y];
+        const spawnSpaces = emptyCardinalSquares(myLoc);
+        const validActions = this.actions.filter((action) => {
+            if (action.id === "screech") {
+                return spawnSpaces.length > 0;
+            }
+            else {
+                return true;
+            }
+        });
+        const action = randomFromArray(validActions);
         if (action.id === "gnaw") {
             return performNPCAction(this, action, randomFromArray(currentCombat!.players));
         } else if (action.id === "screech") {
