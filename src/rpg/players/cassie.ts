@@ -87,7 +87,7 @@ const mailStorm: Action<GridLocation> = {
         return targets;
     },
     async apply(targetSquares) {
-        damageEntitiesOnSquares(this, targetSquares, 5);
+        damageEntitiesOnSquares(this, targetSquares, 8);
     },
     animation: {
         async animate(target: GridLocation) {
@@ -137,7 +137,7 @@ const airMail: Action<GridLocation> = {
                 canvasPos[0] + (GRID_SQUARE_WIDTH / 2) * camera.scale,
                 canvasPos[1] + (GRID_SQUARE_HEIGHT / 2) * camera.scale
             );
-            damageEntitiesOnSquares(this, [square], 10);
+            damageEntitiesOnSquares(this, [square], 18);
             await wait(120);
         }
     },

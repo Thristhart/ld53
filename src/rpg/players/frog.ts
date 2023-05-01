@@ -146,7 +146,7 @@ const steelBeams: Action<GridLocation> = {
     },
     targetOptions: ["Vertical", "Horizontal"],
     async apply(targetSquares, targetOption) {
-        damageEntitiesOnSquares(this, targetSquares, 9);
+        damageEntitiesOnSquares(this, targetSquares, 12);
     },
     // TODO: animate steel beam
 };
