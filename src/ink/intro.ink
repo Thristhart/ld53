@@ -27,6 +27,7 @@ Bushes behind Cassie begin to rustle.
 rat: Hey there, scamp! Hands off our cake!
 ~ combat = "cops"
 ~ shouldShowDialog = false
+#speaking:cat,
 cat: Now I can finally dig into this cake!
 cat: Wait, this has words on it.
 cat: "Happy birthday, Leslie!"
