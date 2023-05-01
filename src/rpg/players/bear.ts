@@ -293,4 +293,12 @@ export class Bear extends Player {
             drawBarrier(context, renderX + PLAYER_DRAW_WIDTH / 2, renderY - 64, this.barrier);
         }
     }
+    die(): Promise<void> {
+        // remove all onDamaged things
+        // this only works as long as bear is the only ondamaged, which is probably going to be true
+        currentCombat?.players.forEach((player) => {
+            player.onDamaged = undefined;
+        });
+        return super.die();
+    }
 }
