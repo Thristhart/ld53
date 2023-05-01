@@ -18,8 +18,10 @@ import { Clown } from "./enemies/clown";
 import { Howl } from "howler";
 import combatMusicPath from "~/assets/audio/battle final mix.mp3";
 
-const combatMusic1 = new Howl({ src: [combatMusicPath], volume: 0.2 });
-const combatMusic2 = new Howl({ src: [combatMusicPath], volume: 0.2 });
+const musicVolume = 0.08;
+
+const combatMusic1 = new Howl({ src: [combatMusicPath], volume: musicVolume });
+const combatMusic2 = new Howl({ src: [combatMusicPath], volume: musicVolume });
 let currentCombatMusic = combatMusic1;
 
 if (import.meta.env.DEV) {
@@ -73,33 +75,18 @@ export const combats = {
         players: [Cassie],
         playerLevel: 2,
         enemies: [
-            { type: "rat", x: 0, y: 0 },
-            { type: "rat", x: 0, y: 1 },
             { type: "rat", x: 0, y: 2 },
-            { type: "rat", x: 0, y: 3 },
-            { type: "rat", x: 0, y: 4 },
-            { type: "rat", x: 1, y: 0 },
             { type: "rat", x: 1, y: 1 },
-            { type: "rat", x: 1, y: 2 },
             { type: "rat", x: 1, y: 3 },
-            { type: "rat", x: 1, y: 4 },
-            { type: "rat", x: 2, y: 0 },
             { type: "rat", x: 2, y: 1 },
-            { type: "rat", x: 2, y: 2 },
             { type: "rat", x: 2, y: 3 },
-            { type: "rat", x: 2, y: 4 },
-            { type: "rat", x: 3, y: 0 },
             { type: "rat", x: 3, y: 1 },
-            { type: "rat", x: 3, y: 2 },
             { type: "rat", x: 3, y: 3 },
-            { type: "rat", x: 3, y: 4 },
-            { type: "rat", x: 4, y: 0 },
             { type: "rat", x: 4, y: 1 },
             { type: "rat", x: 4, y: 2 },
             { type: "rat", x: 4, y: 3 },
-            { type: "rat", x: 4, y: 4 },
         ],
-        startingSide: StartingSide.player,
+        startingSide: StartingSide.enemy,
     }),
     cops: makeCombat({
         gridWidth: 5,
@@ -132,21 +119,6 @@ export const combats = {
         startingSide: StartingSide.enemy,
     }),
 } as const;
-// 7x7 option
-// gridWidth: 7,
-// gridHeight: 7,
-// players: [Bear, Cassie, Frog],
-// playerLevel: 4,
-// enemies: [
-//     { type: "clown", x: 3, y: 1 },
-//     { type: "clown", x: 4, y: 2 },
-//     { type: "clown", x: 5, y: 3 },
-//     { type: "clown", x: 4, y: 4 },
-//     { type: "clown", x: 3, y: 5 },
-//     { type: "clown", x: 2, y: 4 },
-//     { type: "clown", x: 1, y: 3 },
-//     { type: "clown", x: 2, y: 2 },
-// ],
 
 export let currentCombat: CurrentCombat | undefined;
 interface CurrentCombat {
@@ -218,7 +190,7 @@ export function startCombat(combatName: Exclude<keyof typeof combats, "none">) {
     }
 
     currentCombatMusic.play();
-    currentCombatMusic.fade(0, 0.2, 300);
+    currentCombatMusic.fade(0, musicVolume, 300);
 
     updateCombatTimeAnimationFrame = requestAnimationFrame(updateGameTime);
     if (combatDescription.startingSide === StartingSide.enemy) {
@@ -291,23 +263,23 @@ export function nextTurn() {
     doNPCTurn();
 }
 
-const TURN_DELAY = 500;
+const TURN_DELAY = 700;
 
 async function doNPCTurn() {
-    const doTurn = currentCombat?.currentTurn.value.doTurn?.bind(currentCombat.currentTurn.value);
+    const npc = currentCombat?.currentTurn.value;
+    const doTurn = npc?.doTurn?.bind(npc);
     if (doTurn) {
-        await wait(TURN_DELAY + Math.random() * 400 - 200);
+        await wait(npc?.turnDelay ?? TURN_DELAY);
+        if (!currentCombat) {
+            return;
+        }
         await doTurn();
-        await wait(TURN_DELAY + Math.random() * 400 - 200);
+        await wait(npc?.turnDelay ?? TURN_DELAY);
     }
     nextTurn();
 }
 
-export function endCombat() {
-    currentCombatMusic.fade(currentCombatMusic.volume(), 0, 300);
-    setTimeout(() => {
-        currentCombatMusic.stop();
-    }, 300);
+export async function endCombat() {
     currentCombat = undefined;
     if (import.meta.env.DEV) {
         //@ts-ignore
@@ -317,12 +289,16 @@ export function endCombat() {
     if (updateCombatTimeAnimationFrame) {
         cancelAnimationFrame(updateCombatTimeAnimationFrame);
     }
+    currentCombatMusic.fade(currentCombatMusic.volume(), 0, 300);
+    await wait(300);
+    currentCombatMusic.stop();
 }
 
-export function restartCombat() {
+export async function restartCombat() {
     let combatToRestart = currentCombat!.name;
-    endCombat();
+    await endCombat();
     startCombat(combatToRestart);
+    renderUI();
 }
 
 export function shouldShowCombat() {
@@ -363,7 +339,7 @@ export async function performNPCAction<TargetType extends Player | GridLocation>
     action: Action<TargetType>,
     target: TargetType
 ): Promise<void> {
-    if (!currentCombat) {
+    if (!currentCombat || currentCombat.state.value === "lost" || currentCombat.state.value === "won") {
         return;
     }
     const targets = action.targeting(target, selectedActionOption.value);
@@ -386,8 +362,16 @@ function checkVictoryOrDefeat() {
     }
     if (currentCombat.players.length === 0) {
         currentCombat.state.value = "lost";
+        currentCombatMusic.fade(currentCombatMusic.volume(), 0, 300);
+        wait(300).then(() => {
+            currentCombatMusic.stop();
+        });
     } else if (currentCombat.entities.filter((ent) => ent instanceof BaseEnemy).length === 0) {
         currentCombat.state.value = "won";
+        currentCombatMusic.fade(currentCombatMusic.volume(), 0, 300);
+        wait(300).then(() => {
+            currentCombatMusic.stop();
+        });
     }
 }
 

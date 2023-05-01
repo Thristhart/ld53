@@ -78,6 +78,7 @@ export class Rat extends BaseEnemy {
     static maxHP = 1;
     actions = [gnaw, screech] as const;
     displayName: string = "Rat";
+    turnDelay = 200;
     frameAnimation: FrameAnimation | undefined;
     draw(context: CanvasRenderingContext2D) {
         let x = this.positionAnimation?.currentPos[0] ?? this.x * GRID_SQUARE_WIDTH + GRID_SQUARE_WIDTH / 2;
@@ -86,12 +87,21 @@ export class Rat extends BaseEnemy {
         super.draw(context);
     }
     async doTurn(): Promise<void> {
-        const action = randomFromArray(this.actions);
+        const myLoc: GridLocation = [this.x, this.y];
+        const spawnSpaces = emptyCardinalSquares(myLoc);
+        const validActions = this.actions.filter((action) => {
+            if (action.id === "screech") {
+                return spawnSpaces.length > 0;
+            }
+            else {
+                return true;
+            }
+        });
+        const action = randomFromArray(validActions);
         if (action.id === "gnaw") {
             return performNPCAction(this, action, randomFromArray(currentCombat!.players));
         } else if (action.id === "screech") {
             return performNPCAction(this, action, [this.x, this.y]);
         }
     }
-
 }

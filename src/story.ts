@@ -11,7 +11,7 @@ if (import.meta.env.DEV) {
     window.DEBUG_STORY = story;
 }
 
-export type Speaker = "none" | "cat" | "cattruck" | "rat";
+export type Speaker = "none" | "cat" | "cattruck" | "rat" | "cop" | "frog" | "bear" | "clown" | "leslie";
 
 export interface StoryMessage {
     readonly type: "message";
