@@ -301,8 +301,14 @@ function checkVictoryOrDefeat() {
     }
 }
 
-export function damageActor(from: Actor, target: Actor, damage: number) {
+export async function damageActor(from: Actor, target: Actor, damage: number) {
     if (target instanceof Player) {
+        if (target.onDamaged) {
+            const shouldTakeDamage = await target.onDamaged(from, damage);
+            if (!shouldTakeDamage) {
+                return;
+            }
+        }
         const barrierReduction = Math.min(target.barrier, damage);
         damage -= barrierReduction;
         target.barrier -= barrierReduction;

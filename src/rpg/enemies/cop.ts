@@ -78,11 +78,12 @@ const handcuff = {
         async animate(this: Actor, target: Player) {
             const cop = this as Cop;
             const myPos = gridLocationToCanvas(cop.x, cop.y);
+            const targetPos = target.getVisiblePosition();
             emitHandcuffParticle(
                 myPos[0] + GRID_SQUARE_WIDTH / 2,
                 myPos[1] + GRID_SQUARE_HEIGHT / 2,
-                target.x,
-                target.y
+                targetPos[0],
+                targetPos[1]
             );
 
             await wait(400);

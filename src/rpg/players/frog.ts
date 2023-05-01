@@ -147,7 +147,8 @@ export class Frog extends Player {
     static actions = [steelBeams, makeshiftWall, clearTheSite];
     sheet: SpriteSheet | undefined;
     frameAnimation: FrameAnimation | undefined;
-    draw(context: CanvasRenderingContext2D, x: number, y: number): void {
+    draw(context: CanvasRenderingContext2D, x: number, y: number, isTargeted: boolean): void {
+        super.draw(context, x, y, isTargeted);
         let frame: readonly [number, number];
         if (this.frameAnimation) {
             frame = this.frameAnimation.frames[this.frameAnimation.currentIndex];

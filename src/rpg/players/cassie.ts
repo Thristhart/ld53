@@ -81,8 +81,8 @@ export class Cassie extends Player {
     static baseHP = 15;
     static hpPerLevel = 5;
     static actions = [runDown, mailStorm];
-    positionAnimation: PositionAnimation | undefined;
-    draw(context: CanvasRenderingContext2D, x: number, y: number): void {
+    draw(context: CanvasRenderingContext2D, x: number, y: number, isTargeted: boolean): void {
+        super.draw(context, x, y, isTargeted);
         const spriteAspectRatio = catSheet.spriteHeight / catSheet.spriteWidth;
         let renderX = x;
         let renderY = y;
@@ -95,8 +95,8 @@ export class Cassie extends Player {
             height: PLAYER_DRAW_HEIGHT * spriteAspectRatio,
         });
         context.font = "22px Montserrat";
-        drawCenteredText(context, "CASSIE", x, y - PLAYER_DRAW_HEIGHT / 2 + 32, "black", "white");
-        drawCenteredText(context, `HP: ${this.hp}`, x, y + 80, "black", "white");
+        drawCenteredText(context, "CASSIE", renderX, renderY - PLAYER_DRAW_HEIGHT / 2 + 32, "black", "white");
+        drawCenteredText(context, `HP: ${this.hp}`, renderX, renderY + 80, "black", "white");
 
         if (this.barrier) {
             drawBarrier(context, x + PLAYER_DRAW_WIDTH / 2, y - 64, this.barrier);

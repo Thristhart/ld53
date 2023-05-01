@@ -1,9 +1,10 @@
 import bearSheetPath from "~/assets/bear.png";
+import bearAttackSheetPath from "~/assets/bear_attack.png";
 import { loadImage } from "../loadImage";
 import { SpriteSheet, drawSprite } from "../drawSprite";
 import { Player } from "../basePlayer";
-import { FrameAnimation, PositionAnimation, makeLerpAnimation } from "../animation";
-import { combatTime, currentCombat, damageEntity, getActorAtLocation } from "../combat";
+import { FrameAnimation, PositionAnimation, makeFrameAnimation, makeLerpAnimation } from "../animation";
+import { combatTime, currentCombat, damageActor, damageEntity, getActorAtLocation } from "../combat";
 import { drawCenteredText } from "../drawCenteredText";
 import {
     PLAYER_DRAW_WIDTH,
@@ -15,7 +16,7 @@ import {
 } from "../render";
 import { drawBarrier } from "./drawBarrier";
 import { Action, GridLocation } from "../action";
-import { horizontalLine, singleGridLocationWithEnemy } from "../targetShapes";
+import { horizontalLine, singleGridLocationWithEnemy, singlePlayer } from "../targetShapes";
 import { Actor } from "../actor";
 import { animate } from "../animate";
 import { BaseEntity } from "../baseEntity";
@@ -23,6 +24,12 @@ import { emitBikeParticle } from "../particles/bike";
 
 const bearSheet: SpriteSheet = {
     image: loadImage(bearSheetPath),
+    spriteWidth: 38,
+    spriteHeight: 38,
+};
+
+const bearAttackSheet: SpriteSheet = {
+    image: loadImage(bearAttackSheetPath),
     spriteWidth: 38,
     spriteHeight: 38,
 };
@@ -121,10 +128,11 @@ const throwBike: Action<GridLocation> = {
         }
         const end = gridLocationToCanvas(endpoint[0], endpoint[1]);
 
+        const previousPositionAnimation = bear.positionAnimation;
         await new Promise<void>((resolve) => {
             let hasThrown = false;
             bear.positionAnimation = makeLerpAnimation(
-                [bear.x, bear.y],
+                [bear.positionAnimation?.currentPos[0] ?? bear.x, bear.positionAnimation?.currentPos[1] ?? bear.y],
                 [start[0], start[1] + GRID_SQUARE_HEIGHT * camera.scale],
                 400,
                 0,
@@ -141,14 +149,59 @@ const throwBike: Action<GridLocation> = {
                     }
                 }
             );
-            animate((dt) => {
-                bear.positionAnimation?.tick(dt);
-            }, 400);
+            animate(bear.positionAnimation.tick, bear.positionAnimation.duration);
         });
-        bear.positionAnimation = undefined;
+        bear.positionAnimation = previousPositionAnimation;
         for (const vic of victims) {
             damageEntity(this, vic, 10);
         }
+    },
+};
+
+const reversal: Action<Player> = {
+    id: "reversal",
+    name: "Reversal",
+    description:
+        "BEARNAME protects the target, countering the next attack that would hit them, and returning the damage to the attacker.",
+    targetType: "player",
+    targeting: singlePlayer,
+    async apply(targets) {
+        const bear = this as Bear;
+
+        const target = targets[0];
+        target.onDamaged = async (attacker, damage) => {
+            bear.sheet = bearAttackSheet;
+            bear.frameAnimation = makeFrameAnimation(
+                [
+                    [0, 0],
+                    [1, 0],
+                    [2, 0],
+                    [3, 0],
+                ],
+                66,
+                0,
+                () => {
+                    bear.sheet = undefined;
+                    bear.frameAnimation = undefined;
+                    bear.positionAnimation = undefined;
+                    target.onDamaged = undefined;
+                    damageActor(bear, attacker, damage * 2);
+                }
+            );
+            await animate(
+                bear.frameAnimation.tick,
+                bear.frameAnimation.frames.length * bear.frameAnimation.timePerFrame
+            );
+            return false;
+        };
+
+        bear.positionAnimation = makeLerpAnimation(
+            bear.getVisiblePosition(),
+            [target.x + PLAYER_DRAW_WIDTH, target.y],
+            400,
+            0
+        );
+        await animate(bear.positionAnimation.tick, bear.positionAnimation.duration);
     },
 };
 
@@ -156,11 +209,11 @@ export class Bear extends Player {
     displayName: string = "Bear";
     static baseHP = 20;
     static hpPerLevel = 10;
-    static actions = [suplex, throwBike];
+    static actions = [suplex, throwBike, reversal];
     sheet: SpriteSheet | undefined;
     frameAnimation: FrameAnimation | undefined;
-    positionAnimation: PositionAnimation | undefined;
-    draw(context: CanvasRenderingContext2D, x: number, y: number): void {
+    draw(context: CanvasRenderingContext2D, x: number, y: number, isTargeted: boolean): void {
+        super.draw(context, x, y, isTargeted);
         let frame: readonly [number, number];
         if (this.frameAnimation) {
             frame = this.frameAnimation.frames[this.frameAnimation.currentIndex];
@@ -180,11 +233,11 @@ export class Bear extends Player {
             height: PLAYER_DRAW_HEIGHT * spriteAspectRatio,
         });
         context.font = "22px Montserrat";
-        drawCenteredText(context, "BEAR", x, y - PLAYER_DRAW_HEIGHT / 2 + 32, "black", "white");
-        drawCenteredText(context, `HP: ${this.hp}`, x, y + 80, "black", "white");
+        drawCenteredText(context, "BEAR", renderX, renderY - PLAYER_DRAW_HEIGHT / 2 + 32, "black", "white");
+        drawCenteredText(context, `HP: ${this.hp}`, renderX, renderY + 80, "black", "white");
 
         if (this.barrier) {
-            drawBarrier(context, x + PLAYER_DRAW_WIDTH / 2, y - 64, this.barrier);
+            drawBarrier(context, renderX + PLAYER_DRAW_WIDTH / 2, renderY - 64, this.barrier);
         }
     }
 }
