@@ -15,6 +15,13 @@ import { Frog } from "./players/frog";
 import { Cop } from "./enemies/cop";
 import { Bear } from "./players/bear";
 import { Clown } from "./enemies/clown";
+import { Howl } from "howler";
+import combatMusicPath from "~/assets/audio/battle final mix.mp3";
+
+const combatMusic1 = new Howl({ src: [combatMusicPath], volume: 0.2 });
+const combatMusic2 = new Howl({ src: [combatMusicPath], volume: 0.2 });
+
+let currentCombatMusic = combatMusic1;
 
 interface EnemyDescription {
     type: EnemyType;
@@ -192,6 +199,9 @@ export function startCombat(combatName: Exclude<keyof typeof combats, "none">) {
         window.DEBUG_COMBAT = currentCombat;
     }
 
+    currentCombatMusic.play();
+    currentCombatMusic.fade(0, 0.2, 300);
+
     updateCombatTimeAnimationFrame = requestAnimationFrame(updateGameTime);
     if (combatDescription.startingSide === StartingSide.enemy) {
         doNPCTurn();
@@ -276,6 +286,10 @@ async function doNPCTurn() {
 }
 
 export function endCombat() {
+    currentCombatMusic.fade(currentCombatMusic.volume(), 0, 300);
+    setTimeout(() => {
+        currentCombatMusic.stop();
+    }, 300);
     currentCombat = undefined;
     if (import.meta.env.DEV) {
         //@ts-ignore
