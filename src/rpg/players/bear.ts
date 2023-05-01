@@ -80,6 +80,7 @@ const suplex: Action<GridLocation> = {
             await animate(target.positionAnimation.tick, target.positionAnimation.duration);
         }
 
+        damageEntity(bear, target, 7);
         if (actorAlreadyAtSquare) {
             damageEntity(bear, target, 7);
             damageEntity(bear, actorAlreadyAtSquare, 7);

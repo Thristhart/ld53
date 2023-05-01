@@ -179,6 +179,8 @@ export class Clown extends BaseEnemy {
         const validMovementSquares = square(myLoc, 2).filter(
             (loc) => (isOrthagonal(myLoc, loc) || isDiagonal(myLoc, loc)) && canMove(myLoc, loc)
         );
+        
+        const healTargets = cardinalSquares(myLoc).concat(diagonalSquares(myLoc)).filter(getActorAtLocation);
 
         const verticalAllies = getLineupTargetsInDirection(this, "vertical");
         const horizontalAllies = getLineupTargetsInDirection(this, "horizontal");
@@ -191,19 +193,22 @@ export class Clown extends BaseEnemy {
                 return validMovementSquares.length > 0;
             } else if (action.id === "lineUp") {
                 return verticalAllies.length > 1 || horizontalAllies.length > 1;
+            } if(action.id === "laughterIsTheBestMedicine"){
+                return healTargets.length > 0;
             }
-
-            return true;
+            else {
+                return true;
+            }
         });
         const action = randomFromArray(validActions);
-        if (action.id === "circusAct") {
+        if (action?.id === "circusAct") {
             const target = randomFromArray(validMovementSquares);
             return performNPCAction(this, action, target);
         }
-        if (action.id === "laughterIsTheBestMedicine") {
+        if (action?.id === "laughterIsTheBestMedicine") {
             return performNPCAction(this, action, [this.x, this.y]);
         }
-        if (action.id === "lineUp") {
+        if (action?.id === "lineUp") {
             return performNPCAction(this, action, randomFromArray(currentCombat!.players));
         }
     }
