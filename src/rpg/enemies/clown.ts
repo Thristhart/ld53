@@ -3,7 +3,7 @@ import { randomFromArray } from "~/util/randomFromArray";
 import { GridLocation } from "../action";
 import { Actor } from "../actor";
 import { animate } from "../animate";
-import { FrameAnimation, makeLerpAnimation } from "../animation";
+import { FrameAnimation, makeFrameAnimation, makeLerpAnimation } from "../animation";
 import { Player } from "../basePlayer";
 import {
     combatTime,
@@ -74,6 +74,16 @@ const circusAct = {
     },
 } as const;
 
+function getLineupTargetsInDirection(clown: Clown, direction: "vertical" | "horizontal") {
+    let clownSquares;
+    if (direction === "vertical") {
+        clownSquares = verticalLineWithActors([clown.x, clown.y]);
+    } else {
+        clownSquares = horizontalLineWithActors([clown.x, clown.y]);
+    }
+    return clownSquares.map(getActorAtLocation).filter((actor) => actor instanceof Clown && !hasActorActed(actor));
+}
+
 const lineUp = {
     id: "lineUp",
     name: "Line Up",
@@ -84,18 +94,31 @@ const lineUp = {
         const target = targets[0];
         const clown = this as Clown;
 
-        const direction = randomFromArray(["vertical", "horizontal"] as const);
-        let clownSquares;
-        if (direction === "vertical") {
-            clownSquares = verticalLineWithActors([clown.x, clown.y]);
-        } else {
-            clownSquares = horizontalLineWithActors([clown.x, clown.y]);
-        }
-        const allies = clownSquares
-            .map(getActorAtLocation)
-            .filter((actor) => actor instanceof Clown && !hasActorActed(actor));
+        const verticalAllies = getLineupTargetsInDirection(clown, "vertical");
+        const horizontalAllies = getLineupTargetsInDirection(clown, "horizontal");
+
+        const allies = verticalAllies.length >= horizontalAllies.length ? verticalAllies : horizontalAllies;
 
         allies.forEach(skipActorTurn);
+
+        await Promise.all(
+            allies.map((ally) => {
+                const anim = makeFrameAnimation(
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [0, 0],
+                        [1, 0],
+                        [0, 0],
+                        [1, 0],
+                        [0, 0],
+                    ],
+                    128
+                );
+                (ally as Clown).frameAnimation = anim;
+                return animate(anim.tick, anim.frames.length * anim.timePerFrame);
+            })
+        );
 
         lastNPCLog.value = `${allies.length} clowns line up to put on a violent display to ${target.displayName}`;
 
@@ -157,12 +180,20 @@ export class Clown extends BaseEnemy {
             (loc) => (isOrthagonal(myLoc, loc) || isDiagonal(myLoc, loc)) && canMove(myLoc, loc)
         );
 
+        const verticalAllies = getLineupTargetsInDirection(this, "vertical");
+        const horizontalAllies = getLineupTargetsInDirection(this, "horizontal");
+        if (verticalAllies.length >= 3 || horizontalAllies.length >= 3) {
+            return performNPCAction(this, lineUp, randomFromArray(currentCombat!.players));
+        }
+
         const validActions = this.actions.filter((action) => {
             if (action.id === "circusAct") {
                 return validMovementSquares.length > 0;
-            } else {
-                return true;
+            } else if (action.id === "lineUp") {
+                return verticalAllies.length > 1 || horizontalAllies.length > 1;
             }
+
+            return true;
         });
         const action = randomFromArray(validActions);
         if (action.id === "circusAct") {
