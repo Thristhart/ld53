@@ -63,7 +63,7 @@ const suplex: Action<GridLocation> = {
         if (nextPosition[0] < 0) {
             nextPosition[0] = 0;
         } else {
-            actorsAlreadyAtSquare = getActorsAtLocation(nextPosition);
+            actorsAlreadyAtSquare = getActorsAtLocation(nextPosition).filter((actor) => !(actor instanceof Fire));
             if (actorsAlreadyAtSquare.length > 0) {
                 nextPosition = targetLoc;
             }

@@ -33,6 +33,11 @@ export class Fire extends BaseEntity implements Actor {
     }
     async doTurn() {
         this.lifetime--;
+        if (this.lifetime <= 0) {
+            lastNPCLog.value = `The fire goes out.`;
+            this.die();
+            return;
+        }
 
         const sharingSpace = getActorsAtLocation([this.x, this.y]).filter((actor) => !(actor instanceof Fire));
         if (sharingSpace.length === 0) {
@@ -41,9 +46,6 @@ export class Fire extends BaseEntity implements Actor {
             const victim = sharingSpace[0];
             lastNPCLog.value = `${victim.displayName} is burned!`;
             damageEntity(this, victim, 3);
-        }
-        if (this.lifetime <= 0) {
-            this.die();
         }
     }
 }
