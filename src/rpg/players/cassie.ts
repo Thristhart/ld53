@@ -15,13 +15,14 @@ import {
 } from "../render";
 import { horizontalLine, singleGridLocationWithEnemy, square, verticalLine } from "../targetShapes";
 import { PositionAnimation, makeLerpAnimation } from "../animation";
-import { currentCombat, getActorAtLocation } from "../combat";
+import { currentCombat, getActorsAtLocation } from "../combat";
 import { mailStormParticles } from "../particles/mail";
 import { animate } from "../animate";
 import { wait } from "~/util/wait";
 import { drawBarrier } from "./drawBarrier";
 import { Box } from "../enemies/box";
 import { emitExplosionParticle } from "../particles/explosion";
+import { Fire } from "../entities/fire";
 
 const catSheet: SpriteSheet = {
     image: loadImage(catSheetPath),
@@ -32,30 +33,38 @@ const catSheet: SpriteSheet = {
 const runDown: Action<GridLocation> = {
     id: "runDown",
     name: "Run Down",
-    description: "Cassie drives the truck in a horizontal line, damaging enemies.",
+    description: "Cassie drives the truck in a horizontal line, damaging enemies and leaving a trail of fire.",
     targetType: "grid",
     targeting: horizontalLine,
     async apply(targetSquares) {
-        damageEntitiesOnSquares(this, targetSquares, 5);
-    },
-    animation: {
-        async animate(_baseTarget: GridLocation, targetSquares: GridLocation[]) {
-            const cassie = this as Cassie;
-            const target = gridLocationToCanvas(targetSquares[0][0], targetSquares[0][1]);
-            const left = [target[0], target[1] + (GRID_SQUARE_HEIGHT / 2) * camera.scale] as const;
-            const right = [
-                target[0] + GRID_SQUARE_WIDTH * (currentCombat!.width + 1) * camera.scale,
-                target[1] + (GRID_SQUARE_HEIGHT / 2) * camera.scale,
-            ] as const;
-            cassie.positionAnimation = makeLerpAnimation([cassie.x, cassie.y], left, 400, 0, () => {
-                cassie.positionAnimation = makeLerpAnimation(left, right, 800, 400, () => {
-                    cassie.positionAnimation = undefined;
-                });
-            });
-            return animate((dt) => {
-                cassie.positionAnimation?.tick(dt);
-            }, 1200);
-        },
+        const cassie = this as Cassie;
+        const target = gridLocationToCanvas(targetSquares[0][0], targetSquares[0][1]);
+        const left = [target[0], target[1] + (GRID_SQUARE_HEIGHT / 2) * camera.scale] as const;
+        const right = [
+            target[0] + GRID_SQUARE_WIDTH * (currentCombat!.width + 1) * camera.scale,
+            target[1] + (GRID_SQUARE_HEIGHT / 2) * camera.scale,
+        ] as const;
+        const setupAnimation = makeLerpAnimation([cassie.x, cassie.y], left, 400, 0);
+        cassie.positionAnimation = setupAnimation;
+        await animate(setupAnimation.tick, setupAnimation.duration);
+
+        const driveAnimation = makeLerpAnimation(left, right, 800);
+        cassie.positionAnimation = driveAnimation;
+
+        let lastDrivenOverIndex = -1;
+
+        await animate((dt) => {
+            driveAnimation.tick(dt);
+            const distanceIndex = Math.floor((dt / driveAnimation.duration) * (targetSquares.length - 1));
+            if (distanceIndex !== lastDrivenOverIndex) {
+                const locationDrivenOver = targetSquares[distanceIndex];
+                damageEntitiesOnSquares(this, [locationDrivenOver], 5);
+                const fire = new Fire(locationDrivenOver[0], locationDrivenOver[1]);
+                currentCombat?.entities.push(fire);
+                lastDrivenOverIndex = distanceIndex;
+            }
+        }, driveAnimation.duration);
+        cassie.positionAnimation = undefined;
     },
 };
 
@@ -65,7 +74,17 @@ const mailStorm: Action<GridLocation> = {
     description: "Cassie scatters mail in a 3x3 area, causing papercuts.",
     targetType: "grid",
     targeting(target) {
-        return square(target, 1);
+        const [x, y] = target;
+        const targets: GridLocation[] = [];
+        for (let newX = Math.max(x - 1, 0); newX <= Math.min(x + 1, currentCombat!.width - 1); newX++) {
+            for (let newY = Math.max(y - 1, 0); newY <= Math.min(y + 1, currentCombat!.height - 1); newY++) {
+                if ((newX === x + 1 && newY == y + 1) || (newX === x + 1 && newY == y - 1)) {
+                    continue;
+                }
+                targets.push([newX, newY]);
+            }
+        }
+        return targets;
     },
     async apply(targetSquares) {
         damageEntitiesOnSquares(this, targetSquares, 5);
@@ -84,14 +103,16 @@ const sendOff: Action<GridLocation> = {
     description: "Cassie packages the target into a box for three turns.",
     targetType: "grid",
     targeting(targetSquare) {
-        const actor = getActorAtLocation(targetSquare);
-        if (actor && !(actor instanceof Box)) {
+        const actors = getActorsAtLocation(targetSquare);
+        if (actors.some((actor) => !(actor instanceof Box || actor instanceof Fire))) {
             return [targetSquare];
         }
         return [];
     },
     async apply(targetSquares) {
-        const victim = getActorAtLocation(targetSquares[0]);
+        const victim = getActorsAtLocation(targetSquares[0]).find(
+            (actor) => !(actor instanceof Box || actor instanceof Fire)
+        )!;
         const box = new Box(victim);
 
         currentCombat?.entities.splice(currentCombat?.entities.indexOf(victim), 1, box);

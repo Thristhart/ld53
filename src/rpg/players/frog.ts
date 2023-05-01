@@ -7,7 +7,7 @@ import { animate } from "../animate";
 import { FrameAnimation, PositionAnimation, makeFrameAnimation, makeLerpAnimation } from "../animation";
 import { BaseEntity } from "../baseEntity";
 import { Player } from "../basePlayer";
-import { combatTime, currentCombat, damageEntity, getActorAtLocation } from "../combat";
+import { combatTime, currentCombat, damageEntity, getActorsAtLocation, isEnemyAtLocation } from "../combat";
 import { drawCenteredText } from "../drawCenteredText";
 import { SpriteSheet, drawSprite } from "../drawSprite";
 import { loadImage } from "../loadImage";
@@ -22,6 +22,7 @@ import {
 } from "../targetShapes";
 import { drawBarrier } from "./drawBarrier";
 import { Cone } from "../entities/cone";
+import { Fire } from "../entities/fire";
 
 const frogSheet: SpriteSheet = {
     image: loadImage(frogSheetPath),
@@ -62,19 +63,21 @@ const clearTheSite: Action<GridLocation> = {
         for (let x = currentCombat.width - 1; x >= 0; x--) {
             const rowTargets: Array<BaseEntity & Actor> = [];
             for (let y = 0; y < currentCombat.height; y++) {
-                const unit = getActorAtLocation([x, y]);
-                if (unit) {
-                    rowTargets.push(unit);
+                const units = getActorsAtLocation([x, y]);
+                for (const unit of units) {
+                    if (!(unit instanceof Fire)) {
+                        rowTargets.push(unit);
+                    }
                 }
             }
             const animations: PositionAnimation[] = [];
             for (const target of rowTargets) {
                 let nextPosition: GridLocation = [target.x + 1, target.y];
-                if (nextPosition[0] >= currentCombat.width || getActorAtLocation(nextPosition)) {
+                if (nextPosition[0] >= currentCombat.width || isEnemyAtLocation(nextPosition)) {
                     nextPosition = [target.x, target.y];
                 } else {
                     nextPosition = [target.x + 2, target.y];
-                    if (nextPosition[0] >= currentCombat.width || getActorAtLocation(nextPosition)) {
+                    if (nextPosition[0] >= currentCombat.width || isEnemyAtLocation(nextPosition)) {
                         nextPosition = [target.x + 1, target.y];
                     }
                 }

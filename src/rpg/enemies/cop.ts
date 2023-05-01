@@ -1,20 +1,20 @@
-import copSheetPath from "~/assets/pigeon_walking-Sheet.png";
 import copShootSheetPath from "~/assets/pigeon_shoot_sheet.png";
+import copSheetPath from "~/assets/pigeon_walking-Sheet.png";
 import { randomFromArray } from "~/util/randomFromArray";
+import { wait } from "~/util/wait";
+import { GridLocation } from "../action";
 import { damagePlayer } from "../actionUtil";
 import { Actor } from "../actor";
-import { FrameAnimation, PositionAnimation, makeFrameAnimation, makeLerpAnimation } from "../animation";
+import { animate } from "../animate";
+import { FrameAnimation, makeFrameAnimation, makeLerpAnimation } from "../animation";
 import { Player } from "../basePlayer";
-import { combatTime, currentCombat, getActorAtLocation, lastNPCLog, performNPCAction } from "../combat";
+import { combatTime, currentCombat, isActorAtLocation, lastNPCLog, performNPCAction } from "../combat";
 import { SpriteSheet, drawSprite } from "../drawSprite";
 import { loadImage } from "../loadImage";
+import { emitHandcuffParticle } from "../particles/handcuffs";
 import { GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH, gridLocationToCanvas, gridLocationToCenter } from "../render";
 import { singleGridLocation, singlePlayer } from "../targetShapes";
 import { BaseEnemy } from "./baseEnemy";
-import { animate } from "../animate";
-import { emitHandcuffParticle } from "../particles/handcuffs";
-import { wait } from "~/util/wait";
-import { GridLocation } from "../action";
 
 const copSheet: SpriteSheet = {
     image: loadImage(copSheetPath),
@@ -70,7 +70,9 @@ const handcuff = {
     targetType: "player",
     targeting: singlePlayer,
     async apply(this: Actor, targets: Player[]) {
-        let targetAbility = randomFromArray(targets[0].actions.filter(a => targets[0].cooldowns.get(a as any) ?? 0 > 0));
+        let targetAbility = randomFromArray(
+            targets[0].actions.filter((a) => targets[0].cooldowns.get(a as any) ?? 0 > 0)
+        );
         lastNPCLog.value = `Cop locks down ${targets[0].displayName}, preventing them from using ${targetAbility.name}`;
         targets[0].cooldowns.set(targetAbility as any, 2);
     },
@@ -103,11 +105,11 @@ const runDown = {
 
         // try to move left twice
         const target: GridLocation = [cop.x - 1, cop.y];
-        if (target[0] < 0 || getActorAtLocation(target)) {
+        if (target[0] < 0 || isActorAtLocation(target)) {
             target[0] = target[0] + 1;
         }
         target[0] = target[0] - 1;
-        if (target[0] < 0 || getActorAtLocation(target)) {
+        if (target[0] < 0 || isActorAtLocation(target)) {
             target[0] = target[0] + 1;
         }
         const distance = cop.x - target[0];
@@ -185,7 +187,7 @@ export class Cop extends BaseEnemy {
                     return false;
                 }
                 const leftOne: GridLocation = [this.x - 1, this.y];
-                if (getActorAtLocation(leftOne)) {
+                if (isActorAtLocation(leftOne)) {
                     return false;
                 }
             }

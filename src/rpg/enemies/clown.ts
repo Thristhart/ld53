@@ -9,9 +9,10 @@ import {
     combatTime,
     currentCombat,
     damageActor,
-    getActorAtLocation,
+    getActorsAtLocation,
     hasActorActed,
     healActor,
+    isActorAtLocation,
     lastNPCLog,
     performNPCAction,
     skipActorTurn,
@@ -81,7 +82,7 @@ function getLineupTargetsInDirection(clown: Clown, direction: "vertical" | "hori
     } else {
         clownSquares = horizontalLineWithActors([clown.x, clown.y]);
     }
-    return clownSquares.map(getActorAtLocation).filter((actor) => actor instanceof Clown && !hasActorActed(actor));
+    return clownSquares.flatMap(getActorsAtLocation).filter((actor) => actor instanceof Clown && !hasActorActed(actor));
 }
 
 const lineUp = {
@@ -139,10 +140,10 @@ const laughterIsTheBestMedicine = {
             mode === LaughterDirection.Orthagonal ? cardinalSquares(centerpoint) : diagonalSquares(centerpoint);
         lastNPCLog.value = "Clown tells his nearby friends a good joke. Humour really is healing.";
         healTargets.forEach((targetLocation) => {
-            const target = getActorAtLocation(targetLocation);
-            if (target !== undefined) {
+            const targets = getActorsAtLocation(targetLocation);
+            targets.forEach((target) => {
                 healActor(this, target, 10);
-            }
+            });
         });
     },
 } as const;
@@ -179,8 +180,8 @@ export class Clown extends BaseEnemy {
         const validMovementSquares = square(myLoc, 2).filter(
             (loc) => (isOrthagonal(myLoc, loc) || isDiagonal(myLoc, loc)) && canMove(myLoc, loc)
         );
-        
-        const healTargets = cardinalSquares(myLoc).concat(diagonalSquares(myLoc)).filter(getActorAtLocation);
+
+        const healTargets = cardinalSquares(myLoc).concat(diagonalSquares(myLoc)).filter(isActorAtLocation);
 
         const verticalAllies = getLineupTargetsInDirection(this, "vertical");
         const horizontalAllies = getLineupTargetsInDirection(this, "horizontal");
@@ -193,10 +194,10 @@ export class Clown extends BaseEnemy {
                 return validMovementSquares.length > 0;
             } else if (action.id === "lineUp") {
                 return verticalAllies.length > 1 || horizontalAllies.length > 1;
-            } if(action.id === "laughterIsTheBestMedicine"){
-                return healTargets.length > 0;
             }
-            else {
+            if (action.id === "laughterIsTheBestMedicine") {
+                return healTargets.length > 0;
+            } else {
                 return true;
             }
         });

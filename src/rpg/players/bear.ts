@@ -4,7 +4,7 @@ import { loadImage } from "../loadImage";
 import { SpriteSheet, drawSprite } from "../drawSprite";
 import { Player } from "../basePlayer";
 import { FrameAnimation, PositionAnimation, makeFrameAnimation, makeLerpAnimation } from "../animation";
-import { combatTime, currentCombat, damageActor, damageEntity, getActorAtLocation } from "../combat";
+import { combatTime, currentCombat, damageActor, damageEntity, getActorsAtLocation } from "../combat";
 import { drawCenteredText } from "../drawCenteredText";
 import {
     PLAYER_DRAW_WIDTH,
@@ -21,6 +21,8 @@ import { Actor } from "../actor";
 import { animate } from "../animate";
 import { BaseEntity } from "../baseEntity";
 import { emitBikeParticle } from "../particles/bike";
+import { BaseEnemy } from "../enemies/baseEnemy";
+import { Fire } from "../entities/fire";
 
 const bearSheet: SpriteSheet = {
     image: loadImage(bearSheetPath),
@@ -51,15 +53,18 @@ const suplex: Action<GridLocation> = {
         const bear = this as Bear;
 
         const targetLoc = targets[0];
-        const target = getActorAtLocation(targetLoc)!;
+        const targetActors = getActorsAtLocation(targetLoc)!;
+        const enemyActor = targetActors.find((actor) => actor instanceof BaseEnemy);
+        const target = enemyActor ?? targetActors[0];
+
         let nextPosition: GridLocation = [targetLoc[0] - 1, targetLoc[1]];
-        let actorAlreadyAtSquare: (Actor & BaseEntity) | undefined;
+        let actorsAlreadyAtSquare: (Actor & BaseEntity)[] = [];
 
         if (nextPosition[0] < 0) {
             nextPosition[0] = 0;
         } else {
-            actorAlreadyAtSquare = getActorAtLocation(nextPosition);
-            if (actorAlreadyAtSquare) {
+            actorsAlreadyAtSquare = getActorsAtLocation(nextPosition);
+            if (actorsAlreadyAtSquare.length > 0) {
                 nextPosition = targetLoc;
             }
         }
@@ -81,9 +86,11 @@ const suplex: Action<GridLocation> = {
         }
 
         damageEntity(bear, target, 7);
-        if (actorAlreadyAtSquare) {
+        if (actorsAlreadyAtSquare) {
             damageEntity(bear, target, 7);
-            damageEntity(bear, actorAlreadyAtSquare, 7);
+            actorsAlreadyAtSquare.forEach((actor) => {
+                damageEntity(bear, actor, 7);
+            });
         }
     },
 };
@@ -103,8 +110,8 @@ const throwBike: Action<GridLocation> = {
     async apply(targets, targetOption) {
         const bear = this as Bear;
         const victims = targets
-            .map(getActorAtLocation)
-            .filter((a) => a !== undefined)
+            .flatMap(getActorsAtLocation)
+            .filter((a) => a !== undefined && !(a instanceof Fire))
             .sort((a, b) => {
                 if (a.x < b.x) {
                     return -1;
@@ -226,7 +233,7 @@ const finisher: Action<GridLocation> = {
     targeting: singleGridLocationWithEnemy,
     async apply(targets) {
         const bear = this as Bear;
-        const victim = getActorAtLocation(targets[0]);
+        const victim = getActorsAtLocation(targets[0]).find((actor) => actor instanceof BaseEnemy)!;
 
         bear.sheet = bearAttackSheet;
         bear.frameAnimation = makeFrameAnimation(
