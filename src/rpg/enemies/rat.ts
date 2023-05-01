@@ -6,11 +6,11 @@ import { Actor } from "../actor";
 import { animate } from "../animate";
 import { FrameAnimation, makeFrameAnimation } from "../animation";
 import { Player } from "../basePlayer";
-import { currentCombat, lastNPCLog, performNPCAction, spawnEnemy } from "../combat";
+import { currentCombat, getActorsAtLocation, lastNPCLog, performNPCAction, spawnEnemy } from "../combat";
 import { SpriteSheet, drawSprite } from "../drawSprite";
 import { loadImage } from "../loadImage";
 import { GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH } from "../render";
-import { emptyCardinalSquares, singlePlayer } from "../targetShapes";
+import { cardinalSquares, emptyCardinalSquares, singlePlayer } from "../targetShapes";
 import { BaseEnemy } from "./baseEnemy";
 
 import ratSpawnSoundPath from "~/assets/audio/rat_spawn.mp3";
@@ -94,7 +94,9 @@ export class Rat extends BaseEnemy {
     }
     async doTurn(): Promise<void> {
         const myLoc: GridLocation = [this.x, this.y];
-        const spawnSpaces = emptyCardinalSquares(myLoc);
+        const spawnSpaces = cardinalSquares(myLoc).filter(
+            s => !(getActorsAtLocation(s).filter(
+                a => (a instanceof Rat)).length > 0));
         const validActions = this.actions.filter((action) => {
             if (action.id === "screech") {
                 return spawnSpaces.length > 0;

@@ -17,6 +17,8 @@ import { Bear } from "./players/bear";
 import { Clown } from "./enemies/clown";
 import { Howl } from "howler";
 import combatMusicPath from "~/assets/audio/battle final mix.mp3";
+import fanfareMusicPath from "~/assets/audio/fanfare.mp3";
+
 import { Fire } from "./entities/fire";
 
 const musicVolume = 0.08;
@@ -24,6 +26,7 @@ const musicVolume = 0.08;
 const combatMusic1 = new Howl({ src: [combatMusicPath], volume: musicVolume });
 const combatMusic2 = new Howl({ src: [combatMusicPath], volume: musicVolume });
 let currentCombatMusic = combatMusic1;
+const fanfare = new Howl({src: [fanfareMusicPath], volume: musicVolume})
 
 if (import.meta.env.DEV) {
     //@ts-ignore
@@ -78,11 +81,11 @@ export const combats = {
         enemies: [
             { type: "rat", x: 0, y: 2 },
             { type: "rat", x: 1, y: 1 },
-            { type: "rat", x: 1, y: 3 },
+            { type: "rat", x: 1, y: 2 },
             { type: "rat", x: 2, y: 1 },
-            { type: "rat", x: 2, y: 3 },
+            { type: "rat", x: 2, y: 2 },
             { type: "rat", x: 4, y: 1 },
-            { type: "rat", x: 4, y: 3 },
+            { type: "rat", x: 4, y: 2 },
         ],
         startingSide: StartingSide.enemy,
     }),
@@ -383,6 +386,8 @@ function checkVictoryOrDefeat() {
         currentCombatMusic.fade(currentCombatMusic.volume(), 0, 300);
         wait(300).then(() => {
             currentCombatMusic.stop();
+            fanfare.seek(0);
+            fanfare.play();
         });
     }
 }
