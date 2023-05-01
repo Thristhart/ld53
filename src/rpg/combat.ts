@@ -278,14 +278,15 @@ export function nextTurn() {
     doNPCTurn();
 }
 
-const TURN_DELAY = 500;
+const TURN_DELAY = 700;
 
 async function doNPCTurn() {
-    const doTurn = currentCombat?.currentTurn.value.doTurn?.bind(currentCombat.currentTurn.value);
+    const npc = currentCombat?.currentTurn.value;
+    const doTurn = npc?.doTurn?.bind(npc);
     if (doTurn) {
-        await wait(TURN_DELAY + Math.random() * 400 - 200);
+        await wait(npc?.turnDelay ?? TURN_DELAY);
         await doTurn();
-        await wait(TURN_DELAY + Math.random() * 400 - 200);
+        await wait(npc?.turnDelay ?? TURN_DELAY);
     }
     nextTurn();
 }

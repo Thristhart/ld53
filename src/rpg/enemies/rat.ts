@@ -78,6 +78,7 @@ export class Rat extends BaseEnemy {
     static maxHP = 1;
     actions = [gnaw, screech] as const;
     displayName: string = "Rat";
+    turnDelay = 200;
     frameAnimation: FrameAnimation | undefined;
     draw(context: CanvasRenderingContext2D) {
         let x = this.positionAnimation?.currentPos[0] ?? this.x * GRID_SQUARE_WIDTH + GRID_SQUARE_WIDTH / 2;
@@ -93,5 +94,4 @@ export class Rat extends BaseEnemy {
             return performNPCAction(this, action, [this.x, this.y]);
         }
     }
-
 }
