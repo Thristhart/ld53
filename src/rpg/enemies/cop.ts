@@ -141,15 +141,13 @@ export class Cop extends BaseEnemy {
                 frame = [0, 0];
             }
         }
+        let x = this.positionAnimation?.currentPos[0] ?? this.x * GRID_SQUARE_WIDTH + GRID_SQUARE_WIDTH / 2;
+        let y = this.positionAnimation?.currentPos[1] ?? this.y * GRID_SQUARE_HEIGHT + GRID_SQUARE_HEIGHT / 2;
         let sheet = this.sheet ?? copSheet;
-        drawSprite(
-            context,
-            sheet,
-            this.x * GRID_SQUARE_WIDTH + GRID_SQUARE_WIDTH / 2,
-            this.y * GRID_SQUARE_HEIGHT + GRID_SQUARE_HEIGHT / 2,
-            this.frameAnimation?.frames[this.frameAnimation.currentIndex] ?? [0, 0],
-            { width: sheet.spriteWidth * 0.6, height: sheet.spriteHeight * 0.6 }
-        );
+        drawSprite(context, sheet, x, y, this.frameAnimation?.frames[this.frameAnimation.currentIndex] ?? [0, 0], {
+            width: sheet.spriteWidth * 0.6,
+            height: sheet.spriteHeight * 0.6,
+        });
         super.draw(context);
     }
     async doTurn(): Promise<void> {

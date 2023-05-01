@@ -13,6 +13,7 @@ import { Rat } from "./enemies/rat";
 import { Cassie } from "./players/cassie";
 import { Frog } from "./players/frog";
 import { Cop } from "./enemies/cop";
+import { Bear } from "./players/bear";
 
 interface EnemyDescription {
     type: EnemyType;
@@ -63,6 +64,18 @@ export const combats = {
             { type: "cop", x: 2, y: 2 },
             { type: "cop", x: 0, y: 1 },
             { type: "cop", x: 4, y: 4 },
+        ],
+        startingSide: StartingSide.enemy,
+    }),
+    clowns: makeCombat({
+        gridWidth: 5,
+        gridHeight: 5,
+        players: [Bear, Cassie, Frog],
+        playerLevel: 4,
+        enemies: [
+            { type: "cop", x: 0, y: 3 },
+            { type: "cop", x: 1, y: 3 },
+            { type: "cop", x: 2, y: 2 },
         ],
         startingSide: StartingSide.enemy,
     }),

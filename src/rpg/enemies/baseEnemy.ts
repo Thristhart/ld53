@@ -22,6 +22,9 @@ export class BaseEnemy<ActionTypes = Action<Player> | Action<GridLocation>>
         this.maxHP = derivedEnemy.maxHP;
     }
     draw(context: CanvasRenderingContext2D) {
+        let x = this.positionAnimation?.currentPos[0] ?? this.x * GRID_SQUARE_WIDTH + GRID_SQUARE_WIDTH / 2;
+        let y = this.positionAnimation?.currentPos[1] ?? this.y * GRID_SQUARE_HEIGHT + GRID_SQUARE_HEIGHT / 2;
+
         if (currentCombat?.currentTurn.value === this) {
             context.strokeStyle = "white";
             context.strokeRect(
@@ -33,12 +36,7 @@ export class BaseEnemy<ActionTypes = Action<Player> | Action<GridLocation>>
         }
         const hpBarSize = (GRID_SQUARE_WIDTH * 3) / 4;
         context.fillStyle = "red";
-        context.fillRect(
-            this.x * GRID_SQUARE_WIDTH + GRID_SQUARE_WIDTH / 2 - hpBarSize / 2,
-            this.y * GRID_SQUARE_HEIGHT + GRID_SQUARE_HEIGHT / 8,
-            hpBarSize * (this.hp / this.maxHP),
-            2
-        );
+        context.fillRect(x - hpBarSize / 2, y - (GRID_SQUARE_HEIGHT * 3) / 8, hpBarSize * (this.hp / this.maxHP), 2);
     }
     async doTurn() {}
 

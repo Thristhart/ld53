@@ -1,26 +1,19 @@
-import frogSheetPath from "~/assets/frog_idle_strip4.png";
 import frogCroakSheetPath from "~/assets/frog_croak_strip7.png";
-import { loadImage } from "../loadImage";
-import { SpriteSheet, drawSprite } from "../drawSprite";
-import { Player } from "../basePlayer";
-import { drawCenteredText } from "../drawCenteredText";
-import { PLAYER_DRAW_WIDTH, PLAYER_DRAW_HEIGHT, gridLocationToCenter } from "../render";
-import { combatTime, currentCombat, damageEntity, getActorAtLocation } from "../combat";
+import frogSheetPath from "~/assets/frog_idle_strip4.png";
 import { Action, GridLocation } from "../action";
-import {
-    allPlayers,
-    fullGrid,
-    horizontalLineWithLength,
-    singleGridLocation,
-    singlePlayer,
-    verticalLineWithLength,
-} from "../targetShapes";
-import { drawBarrier } from "./drawBarrier";
-import { FrameAnimation, PositionAnimation, makeFrameAnimation, makeLerpAnimation } from "../animation";
+import { damageEntitiesOnSquares } from "../actionUtil";
 import { Actor } from "../actor";
 import { animate } from "../animate";
+import { FrameAnimation, PositionAnimation, makeFrameAnimation, makeLerpAnimation } from "../animation";
 import { BaseEntity } from "../baseEntity";
-import { damageEntitiesOnSquares } from "../actionUtil";
+import { Player } from "../basePlayer";
+import { combatTime, currentCombat, damageEntity, getActorAtLocation } from "../combat";
+import { drawCenteredText } from "../drawCenteredText";
+import { SpriteSheet, drawSprite } from "../drawSprite";
+import { loadImage } from "../loadImage";
+import { PLAYER_DRAW_HEIGHT, PLAYER_DRAW_WIDTH, gridLocationToCenter } from "../render";
+import { allPlayers, fullGrid, horizontalLineWithLength, verticalLineWithLength } from "../targetShapes";
+import { drawBarrier } from "./drawBarrier";
 
 const frogSheet: SpriteSheet = {
     image: loadImage(frogSheetPath),
@@ -120,7 +113,7 @@ const clearTheSite: Action<GridLocation> = {
                 }
             );
             frog.sheet = frogCroakSheet;
-            await animate((dt) => {
+            animate((dt) => {
                 frog.frameAnimation?.tick(dt);
             }, 525);
         },
