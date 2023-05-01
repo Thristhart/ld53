@@ -13,7 +13,7 @@ import {
     camera,
     gridLocationToCanvas,
 } from "../render";
-import { horizontalLine, singleGridLocationWithEnemy, square } from "../targetShapes";
+import { horizontalLine, singleGridLocationWithEnemy, square, verticalLine } from "../targetShapes";
 import { PositionAnimation, makeLerpAnimation } from "../animation";
 import { currentCombat, getActorAtLocation } from "../combat";
 import { mailStormParticles } from "../particles/mail";
@@ -97,11 +97,28 @@ const sendOff: Action<GridLocation> = {
     },
 };
 
+const airMail: Action<GridLocation> = {
+    id: "airMail",
+    name: "Air Mail",
+    description: "Cassie delivers a devestating blow to the back column.",
+    targetType: "grid",
+    targeting(targetSquare) {
+        if (targetSquare[0] !== currentCombat!.width - 1) {
+            return [];
+        }
+        return verticalLine(targetSquare);
+    },
+    async apply(targetSquares) {
+        damageEntitiesOnSquares(this, targetSquares, 10);
+        // TODO: animate explosions(?) on the back row
+    },
+};
+
 export class Cassie extends Player {
     displayName: string = "Cassie";
     static baseHP = 15;
     static hpPerLevel = 5;
-    static actions = [runDown, mailStorm, sendOff];
+    static actions = [runDown, mailStorm, airMail, sendOff];
     draw(context: CanvasRenderingContext2D, x: number, y: number, isTargeted: boolean): void {
         super.draw(context, x, y, isTargeted);
         const spriteAspectRatio = catSheet.spriteHeight / catSheet.spriteWidth;
