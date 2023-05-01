@@ -118,5 +118,10 @@ export class Clown extends BaseEnemy {
         });
         super.draw(context);
     }
-    async doTurn(): Promise<void> {}
+    async doTurn(): Promise<void> {
+        let action = randomFromArray(this.actions);
+        if (action.id === "laughterIsTheBestMedicine") {
+            return performNPCAction(this, action, [this.x, this.y]);
+        }
+    }
 }
