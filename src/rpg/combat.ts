@@ -369,6 +369,12 @@ export async function damageActor(from: Actor, target: Actor, damage: number) {
     checkVictoryOrDefeat();
 }
 
+
+export async function healActor(from: Actor, target: Actor, heal: number) {
+    const maxHeal = target.maxHP - target.hp;
+    target.hp += Math.max(heal, maxHeal);
+}
+
 export function damageEntity(from: Actor, target: BaseEntity & Actor, damage: number) {
     damageActor(from, target, damage);
 }

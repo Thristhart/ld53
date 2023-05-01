@@ -1,14 +1,14 @@
 import clownSheetPath from "~/assets/clown_sheet.png";
 import { randomFromArray } from "~/util/randomFromArray";
 import { damagePlayer } from "../actionUtil";
-import { Actor } from "../actor";
+import { Actor, isActor } from "../actor";
 import { FrameAnimation, PositionAnimation, makeFrameAnimation, makeLerpAnimation } from "../animation";
 import { Player } from "../basePlayer";
-import { combatTime, currentCombat, getActorAtLocation, lastNPCLog, performNPCAction } from "../combat";
+import { combatTime, currentCombat, getActorAtLocation, healActor, lastNPCLog, performNPCAction } from "../combat";
 import { SpriteSheet, drawSprite } from "../drawSprite";
 import { loadImage } from "../loadImage";
 import { GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH, gridLocationToCanvas, gridLocationToCenter } from "../render";
-import { singleGridLocation, singlePlayer } from "../targetShapes";
+import { cardinalSquares, diagonalSquares, emptyCardinalSquares, singleGridLocation, singlePlayer } from "../targetShapes";
 import { BaseEnemy } from "./baseEnemy";
 import { animate } from "../animate";
 import { emitHandcuffParticle } from "../particles/handcuffs";
@@ -20,6 +20,11 @@ const clownSheet: SpriteSheet = {
     spriteWidth: 38,
     spriteHeight: 38,
 };
+
+enum LaughterDirection{
+    Orthagonal = 0,
+    Diagonal = 1
+}
 
 const circusAct = {
     id: "circusAct",
@@ -68,37 +73,20 @@ const laughterIsTheBestMedicine = {
     targetType: "grid",
     targeting: singleGridLocation,
     async apply(this: Actor, targets: GridLocation[]) {
-        // const cop = this as Clown;
-        // lastNPCLog.value = `Cop charges forward 2 spaces`;
-        // // try to move left twice
-        // const target: GridLocation = [cop.x - 1, cop.y];
-        // if (target[0] < 0 || getActorAtLocation(target)) {
-        //     target[0] = target[0] + 1;
-        // }
-        // target[0] = target[0] - 1;
-        // if (target[0] < 0 || getActorAtLocation(target)) {
-        //     target[0] = target[0] + 1;
-        // }
-        // const distance = cop.x - target[0];
-        // if (distance === 0) {
-        //     return;
-        // }
-        // cop.positionAnimation = makeLerpAnimation(
-        //     gridLocationToCenter([cop.x, cop.y]),
-        //     gridLocationToCenter(target),
-        //     distance * 150,
-        //     undefined,
-        //     () => {
-        //         cop.positionAnimation = undefined;
-        //     }
-        // );
-        // await animate(cop.positionAnimation.tick, cop.positionAnimation.duration);
-        // cop.x = target[0];
-        // cop.y = target[1];
+        const centerpoint = targets[0];
+        const mode = randomFromArray([LaughterDirection.Diagonal, LaughterDirection.Orthagonal])
+        const healTargets = (mode === LaughterDirection.Orthagonal) ?  cardinalSquares(centerpoint) : diagonalSquares(centerpoint);
+        healTargets.forEach(targetLocation => {
+            const target =  getActorAtLocation(targetLocation);
+            if(target !== undefined)
+            {
+                healActor(this, target, 5);
+            }
+        });
     },
     animation: {
         async animate(this: Actor, target: GridLocation) {
-            // await wait(400);
+            await wait(400);
         },
     },
 } as const;

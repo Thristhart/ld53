@@ -148,6 +148,35 @@ export function cardinalSquares(target: GridLocation): GridLocation[] {
     return cardinals;
 }
 
+export function diagonalSquares(target: GridLocation): GridLocation[] {
+    if (!currentCombat) {
+        return [];
+    }
+
+    const cardinals: GridLocation[] = [];
+    const [x, y] = target;
+
+    const touchingTopBorder = y <= 0;
+    const touchingLeftBorder = x <= 0;
+    const touchingBottomBorder = y >= currentCombat.height - 1;
+    const touchingRightBorder = x >= currentCombat.width - 1;
+
+    if (!touchingLeftBorder && !touchingTopBorder) {
+        cardinals.push([x - 1, y - 1]);
+    }
+    if (!touchingRightBorder && !touchingTopBorder) {
+        cardinals.push([x + 1, y - 1]);
+    }
+    if (!touchingRightBorder && !touchingBottomBorder) {
+        cardinals.push([x + 1, y + 1]);
+    }
+    if (!touchingLeftBorder && !touchingBottomBorder) {
+        cardinals.push([x - 1, y + 1]);
+    }
+    
+    return cardinals;
+}
+
 export function emptyCardinalSquares(target: GridLocation): GridLocation[] {
     const cardinals = cardinalSquares(target).filter((square) => !getActorAtLocation(square));
     return cardinals;
