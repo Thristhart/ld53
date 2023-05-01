@@ -261,6 +261,8 @@ export async function performCurrentPlayerAction(): Promise<void> {
     }
     // @ts-ignore fuck it
     await action.apply.call(currentCombat.currentTurn.value, targets);
+    // @ts-ignore
+    currentCombat.currentTurn.value.cooldowns.set(action, action.cooldown ?? 0);
     selectedAction.value = undefined;
     currentActionTarget.value = undefined;
     nextTurn();

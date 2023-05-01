@@ -7,6 +7,7 @@ export interface Action<TargetType extends Player | GridLocation> {
     id: string;
     name: string;
     description: string;
+    cooldown?: number;
     animation?: {
         animate: (this: Actor, target: TargetType, targets: TargetType[]) => Promise<void>;
     };

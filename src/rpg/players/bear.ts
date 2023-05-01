@@ -205,11 +205,45 @@ const reversal: Action<Player> = {
     },
 };
 
+const finisher: Action<GridLocation> = {
+    id: "finisher",
+    name: "Heat Finisher",
+    description: "BEARNAME savages the target, dealing an incredible amount of damage. Two turn cooldown.",
+    cooldown: 2,
+    targetType: "grid",
+    targeting: singleGridLocationWithEnemy,
+    async apply(targets) {
+        const bear = this as Bear;
+        const victim = getActorAtLocation(targets[0]);
+
+        bear.sheet = bearAttackSheet;
+        bear.frameAnimation = makeFrameAnimation(
+            [
+                [0, 0],
+                [1, 0],
+                [2, 0],
+                [3, 0],
+            ],
+            66
+        );
+        await animate(bear.frameAnimation.tick, bear.frameAnimation.frames.length * bear.frameAnimation.timePerFrame);
+
+        bear.sheet = undefined;
+        bear.frameAnimation = undefined;
+
+        damageEntity(bear, victim, 30);
+    },
+};
+
 export class Bear extends Player {
     displayName: string = "Bear";
     static baseHP = 20;
     static hpPerLevel = 10;
-    static actions = [suplex, throwBike, reversal];
+    static actions = [suplex, throwBike, reversal, finisher];
+    constructor(level: number) {
+        super(level);
+        this.cooldowns.set(finisher as any, 2);
+    }
     sheet: SpriteSheet | undefined;
     frameAnimation: FrameAnimation | undefined;
     draw(context: CanvasRenderingContext2D, x: number, y: number, isTargeted: boolean): void {

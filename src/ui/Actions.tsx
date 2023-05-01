@@ -55,7 +55,12 @@ export function Actions({ player }: ActionProps) {
                                         selectedActionOption.value = selectedAction.value.targetOptions[0];
                                     }
                                 }}
-                                disabled={player.cooldowns.get(action as any) !== 0}>
+                                disabled={player.cooldowns.get(action as any) !== 0}
+                                title={
+                                    player.cooldowns.get(action as any) === 0
+                                        ? undefined
+                                        : `On cooldown for ${player.cooldowns.get(action as any)} turns`
+                                }>
                                 {action.name}
                             </button>
                         </li>
