@@ -298,6 +298,7 @@ export async function restartCombat() {
     let combatToRestart = currentCombat!.name;
     await endCombat();
     startCombat(combatToRestart);
+    renderUI();
 }
 
 export function shouldShowCombat() {
@@ -361,8 +362,16 @@ function checkVictoryOrDefeat() {
     }
     if (currentCombat.players.length === 0) {
         currentCombat.state.value = "lost";
+        currentCombatMusic.fade(currentCombatMusic.volume(), 0, 300);
+        wait(300).then(() => {
+            currentCombatMusic.stop();
+        });
     } else if (currentCombat.entities.filter((ent) => ent instanceof BaseEnemy).length === 0) {
         currentCombat.state.value = "won";
+        currentCombatMusic.fade(currentCombatMusic.volume(), 0, 300);
+        wait(300).then(() => {
+            currentCombatMusic.stop();
+        });
     }
 }
 
