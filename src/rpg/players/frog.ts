@@ -178,7 +178,7 @@ const cordonOff: Action<GridLocation> = {
 export class Frog extends Player {
     displayName: string = "Frog";
     static baseHP = 20;
-    static hpPerLevel = 10;
+    static hpPerLevel = 6;
     static actions = [steelBeams, makeshiftWall, clearTheSite, cordonOff];
     sheet: SpriteSheet | undefined;
     frameAnimation: FrameAnimation | undefined;

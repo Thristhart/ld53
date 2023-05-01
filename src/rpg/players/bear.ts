@@ -248,8 +248,8 @@ const finisher: Action<GridLocation> = {
 
 export class Bear extends Player {
     displayName: string = "Bear";
-    static baseHP = 20;
-    static hpPerLevel = 10;
+    static baseHP = 12;
+    static hpPerLevel = 8;
     static actions = [suplex, throwBike, reversal, finisher];
     constructor(level: number) {
         super(level);
