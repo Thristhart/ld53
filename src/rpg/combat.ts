@@ -73,9 +73,9 @@ export const combats = {
         players: [Bear, Cassie, Frog],
         playerLevel: 4,
         enemies: [
-            { type: "cop", x: 0, y: 3 },
+            { type: "cop", x: 4, y: 3 },
             { type: "cop", x: 1, y: 3 },
-            { type: "cop", x: 2, y: 2 },
+            { type: "cop", x: 4, y: 2 },
         ],
         startingSide: StartingSide.enemy,
     }),

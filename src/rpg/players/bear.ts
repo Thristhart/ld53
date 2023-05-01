@@ -25,7 +25,13 @@ const suplex: Action<GridLocation> = {
     description:
         "BEARNAME suplexes the target, pulling them forward a square. If they hit another enemy, both will take damage.",
     targetType: "grid",
-    targeting: singleGridLocationWithEnemy,
+    targeting(target) {
+        // Don't allow first square bc pulling there does nothing
+        if (target[0] === 0) {
+            return [];
+        }
+        return singleGridLocationWithEnemy(target);
+    },
     async apply(targets) {
         const bear = this as Bear;
 
