@@ -77,7 +77,7 @@ export const combats = {
             { type: "cop", x: 1, y: 3 },
             { type: "cop", x: 4, y: 2 },
         ],
-        startingSide: StartingSide.enemy,
+        startingSide: StartingSide.player,
     }),
 } as const;
 

@@ -101,12 +101,12 @@ const runDown = {
         lastNPCLog.value = `Cop charges forward 2 spaces`;
 
         // try to move left twice
-        const target: GridLocation = [Math.max(0, cop.x - 1), cop.y];
-        if (getActorAtLocation(target)) {
+        const target: GridLocation = [cop.x - 1, cop.y];
+        if (target[0] < 0 || getActorAtLocation(target)) {
             target[0] = target[0] + 1;
         }
         target[0] = target[0] - 1;
-        if (getActorAtLocation(target)) {
+        if (target[0] < 0 || getActorAtLocation(target)) {
             target[0] = target[0] + 1;
         }
         const distance = cop.x - target[0];
