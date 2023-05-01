@@ -95,6 +95,35 @@ export function square(target: GridLocation, size: number): GridLocation[] {
     return targets;
 }
 
+export function isOrthagonal(from: GridLocation, to: GridLocation): boolean {
+    const dx = to[0] - from[0];
+    const dy = to[1] - from[1];
+    return !(dx && dy);
+}
+export function isDiagonal(from: GridLocation, to: GridLocation): boolean {
+    const dx = to[0] - from[0];
+    const dy = to[1] - from[1];
+    return Math.abs(dx) === Math.abs(dy);
+}
+
+export function canMove(from: GridLocation, to: GridLocation): boolean {
+    if (getActorAtLocation(to)) {
+        return false;
+    }
+    const dx = to[0] - from[0];
+    const dy = to[1] - from[1];
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const unit = [dx / distance, dy / distance];
+    let considering: GridLocation = [Math.round(from[0] + unit[0]), Math.round(from[1] + unit[1])];
+    while (considering[0] !== to[0] || considering[1] !== to[1]) {
+        if (getActorAtLocation(considering)) {
+            return false;
+        }
+        considering = [Math.round(considering[0] + unit[0]), Math.round(considering[1] + unit[1])];
+    }
+    return true;
+}
+
 export function singlePlayer(target: Player): [Player] {
     return [target];
 }

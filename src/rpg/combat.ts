@@ -103,7 +103,7 @@ export const combats = {
             { type: "clown", x: 0, y: 2 },
             { type: "clown", x: 1, y: 1 },
         ],
-        startingSide: StartingSide.player,
+        startingSide: StartingSide.enemy,
     }),
 } as const;
 // 7x7 option

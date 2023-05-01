@@ -1,19 +1,26 @@
 import clownSheetPath from "~/assets/clown_sheet.png";
 import { randomFromArray } from "~/util/randomFromArray";
-import { damagePlayer } from "../actionUtil";
-import { Actor, isActor } from "../actor";
-import { FrameAnimation, PositionAnimation, makeFrameAnimation, makeLerpAnimation } from "../animation";
+import { wait } from "~/util/wait";
+import { GridLocation } from "../action";
+import { Actor } from "../actor";
+import { animate } from "../animate";
+import { FrameAnimation, makeLerpAnimation } from "../animation";
 import { Player } from "../basePlayer";
 import { combatTime, currentCombat, getActorAtLocation, healActor, lastNPCLog, performNPCAction } from "../combat";
 import { SpriteSheet, drawSprite } from "../drawSprite";
 import { loadImage } from "../loadImage";
-import { GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH, gridLocationToCanvas, gridLocationToCenter } from "../render";
-import { cardinalSquares, diagonalSquares, emptyCardinalSquares, singleGridLocation, singlePlayer } from "../targetShapes";
+import { GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH, gridLocationToCenter } from "../render";
+import {
+    canMove,
+    cardinalSquares,
+    diagonalSquares,
+    isDiagonal,
+    isOrthagonal,
+    singleGridLocation,
+    singlePlayer,
+    square,
+} from "../targetShapes";
 import { BaseEnemy } from "./baseEnemy";
-import { animate } from "../animate";
-import { emitHandcuffParticle } from "../particles/handcuffs";
-import { wait } from "~/util/wait";
-import { GridLocation } from "../action";
 
 const clownSheet: SpriteSheet = {
     image: loadImage(clownSheetPath),
@@ -21,9 +28,9 @@ const clownSheet: SpriteSheet = {
     spriteHeight: 38,
 };
 
-enum LaughterDirection{
+enum LaughterDirection {
     Orthagonal = 0,
-    Diagonal = 1
+    Diagonal = 1,
 }
 
 const circusAct = {
@@ -33,9 +40,26 @@ const circusAct = {
     targetType: "grid",
     targeting: singleGridLocation,
     async apply(this: Actor, targets: GridLocation[]) {
-        // const cop = this as Clown;
-        // lastNPCLog.value = `Clown does a funny walk`;
-        // damagePlayer(this, targets[0], 10 - cop.x);
+        const clown = this as Clown;
+
+        const target: GridLocation = targets[0];
+        const dx = target[0] - clown.x;
+        const dy = target[1] - clown.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        clown.positionAnimation = makeLerpAnimation(
+            gridLocationToCenter([clown.x, clown.y]),
+            gridLocationToCenter(target),
+            distance * 150,
+            undefined,
+            () => {
+                clown.positionAnimation = undefined;
+            }
+        );
+        lastNPCLog.value = "Clown does a funny walk";
+        await animate(clown.positionAnimation.tick, clown.positionAnimation.duration);
+
+        clown.x = target[0];
+        clown.y = target[1];
     },
 } as const;
 
@@ -74,20 +98,16 @@ const laughterIsTheBestMedicine = {
     targeting: singleGridLocation,
     async apply(this: Actor, targets: GridLocation[]) {
         const centerpoint = targets[0];
-        const mode = randomFromArray([LaughterDirection.Diagonal, LaughterDirection.Orthagonal])
-        const healTargets = (mode === LaughterDirection.Orthagonal) ?  cardinalSquares(centerpoint) : diagonalSquares(centerpoint);
-        healTargets.forEach(targetLocation => {
-            const target =  getActorAtLocation(targetLocation);
-            if(target !== undefined)
-            {
+        const mode = randomFromArray([LaughterDirection.Diagonal, LaughterDirection.Orthagonal]);
+        const healTargets =
+            mode === LaughterDirection.Orthagonal ? cardinalSquares(centerpoint) : diagonalSquares(centerpoint);
+        lastNPCLog.value = "Clown tells his nearby friends a good joke. Humour really is healing.";
+        healTargets.forEach((targetLocation) => {
+            const target = getActorAtLocation(targetLocation);
+            if (target !== undefined) {
                 healActor(this, target, 5);
             }
         });
-    },
-    animation: {
-        async animate(this: Actor, target: GridLocation) {
-            await wait(400);
-        },
     },
 } as const;
 
@@ -119,7 +139,25 @@ export class Clown extends BaseEnemy {
         super.draw(context);
     }
     async doTurn(): Promise<void> {
-        let action = randomFromArray(this.actions);
+        const myLoc: GridLocation = [this.x, this.y];
+        const validMovementSquares = square(myLoc, 2).filter(
+            (loc) => (isOrthagonal(myLoc, loc) || isDiagonal(myLoc, loc)) && canMove(myLoc, loc)
+        );
+
+        const validActions = this.actions.filter((action) => {
+            if (action.id === "circusAct") {
+                return validMovementSquares.length > 0;
+            }
+            if (action.id === "laughterIsTheBestMedicine") {
+                return true;
+            }
+            return false;
+        });
+        const action = randomFromArray(validActions);
+        if (action.id === "circusAct") {
+            const target = randomFromArray(validMovementSquares);
+            return performNPCAction(this, action, target);
+        }
         if (action.id === "laughterIsTheBestMedicine") {
             return performNPCAction(this, action, [this.x, this.y]);
         }
