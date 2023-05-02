@@ -26,7 +26,7 @@ const musicVolume = 0.08;
 const combatMusic1 = new Howl({ src: [combatMusicPath], volume: musicVolume });
 const combatMusic2 = new Howl({ src: [combatMusicPath], volume: musicVolume });
 let currentCombatMusic = combatMusic1;
-const fanfare = new Howl({src: [fanfareMusicPath], volume: musicVolume})
+const fanfare = new Howl({ src: [fanfareMusicPath], volume: musicVolume });
 
 if (import.meta.env.DEV) {
     //@ts-ignore
@@ -332,7 +332,7 @@ export async function performCurrentPlayerAction(): Promise<void> {
         await action.animation.animate.call(currentCombat.currentTurn.value, currentActionTarget.value, targets);
     }
     // @ts-ignore fuck it
-    await action.apply.call(currentCombat.currentTurn.value, targets);
+    await action.apply.call(currentCombat.currentTurn.value, targets, selectedActionOption.value);
     // @ts-ignore
     currentCombat.currentTurn.value.cooldowns.set(action, action.cooldown ?? 0);
     selectedAction.value = undefined;

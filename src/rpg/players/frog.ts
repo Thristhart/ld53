@@ -11,7 +11,15 @@ import { combatTime, currentCombat, damageEntity, getActorsAtLocation, isEnemyAt
 import { drawCenteredText } from "../drawCenteredText";
 import { SpriteSheet, drawSprite } from "../drawSprite";
 import { loadImage } from "../loadImage";
-import { GRID_SQUARE_HEIGHT, PLAYER_DRAW_HEIGHT, PLAYER_DRAW_WIDTH, gridLocationToCenter } from "../render";
+import {
+    GRID_SQUARE_HEIGHT,
+    GRID_SQUARE_WIDTH,
+    PLAYER_DRAW_HEIGHT,
+    PLAYER_DRAW_WIDTH,
+    camera,
+    gridLocationToCanvas,
+    gridLocationToCenter,
+} from "../render";
 import {
     allPlayers,
     fullGrid,
@@ -23,6 +31,7 @@ import {
 import { drawBarrier } from "./drawBarrier";
 import { Cone } from "../entities/cone";
 import { Fire } from "../entities/fire";
+import { emitBeamParticle } from "../particles/beam";
 
 const frogSheet: SpriteSheet = {
     image: loadImage(frogSheetPath),
@@ -146,9 +155,16 @@ const steelBeams: Action<GridLocation> = {
     },
     targetOptions: ["Vertical", "Horizontal"],
     async apply(targetSquares, targetOption) {
+        const centerSquare = targetSquares[1];
+        const centerSquareCorner = gridLocationToCanvas(centerSquare[0], centerSquare[1]);
+
+        emitBeamParticle(
+            centerSquareCorner[0] + (GRID_SQUARE_WIDTH / 2) * camera.scale,
+            centerSquareCorner[1] + (GRID_SQUARE_HEIGHT / 2) * camera.scale,
+            targetOption as "Vertical" | "Horizontal"
+        );
         damageEntitiesOnSquares(this, targetSquares, 12);
     },
-    // TODO: animate steel beam
 };
 
 const cordonOff: Action<GridLocation> = {
