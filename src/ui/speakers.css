@@ -1,8 +1,8 @@
 /** preload */
 body:after {
     content: "";
-    background-image: url("./assets/cat_idle_blink_strip8.png") url("./assets/cat_truck_full.png")
-        url("../assets/truck_full.png") url("../assets/rat-Sheet.png");
+    background-image: url("./assets/cat_idle_blink_strip8.png"), url("./assets/cat_truck_full.png"),
+        url("../assets/truck_full.png"), url("../assets/rat-Sheet.png");
 }
 
 .speaker-portrait.cat {

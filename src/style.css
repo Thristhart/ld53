@@ -41,5 +41,5 @@ body[data-bg="suburb"] {
 /** preload */
 body:before {
     content: "";
-    background-image: url("./assets/park.jpg") url("./assets/road.jpg") url("./assets/suburb.jpg");
+    background-image: url("./assets/park.jpg"), url("./assets/road.jpg"), url("./assets/suburb.jpg");
 }
