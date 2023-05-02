@@ -20,6 +20,8 @@ import combatMusicPath from "~/assets/audio/battle final mix.mp3";
 import fanfareMusicPath from "~/assets/audio/fanfare.mp3";
 
 import { Fire } from "./entities/fire";
+import { emitDamageParticle } from "./particles/damage";
+import { GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH, camera, gridLocationToCanvas } from "./render";
 
 const musicVolume = 0.08;
 
@@ -404,6 +406,7 @@ export async function damageActor(from: Actor, target: Actor, damage: number) {
         const barrierReduction = Math.min(target.barrier, damage);
         damage -= barrierReduction;
         target.barrier -= barrierReduction;
+        emitDamageParticle(target.x, target.y, damage);
     }
     target.hp -= damage;
     if (target.hp <= 0) {
@@ -418,6 +421,12 @@ export async function healActor(from: Actor, target: Actor, heal: number) {
 }
 
 export function damageEntity(from: Actor, target: BaseEntity & Actor, damage: number) {
+    const particlePos = gridLocationToCanvas(target.x, target.y);
+    emitDamageParticle(
+        particlePos[0] + (GRID_SQUARE_WIDTH / 2) * camera.scale,
+        particlePos[1] + (GRID_SQUARE_HEIGHT / 2) * camera.scale,
+        damage
+    );
     damageActor(from, target, damage);
 }
 

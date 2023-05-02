@@ -201,6 +201,8 @@ interface Particle {
     y: number;
     velocityX: number;
     velocityY: number;
+    accelerationX?: number;
+    accelerationY?: number;
     lifetime: number;
     draw(context: CanvasRenderingContext2D, dt: number): void;
     onDestroy?(): void;
@@ -214,6 +216,12 @@ function drawParticles(context: CanvasRenderingContext2D, dt: number) {
         if (particle.lifetime <= 0) {
             particles.delete(particle);
             particle.onDestroy?.();
+        }
+        if (particle.accelerationX) {
+            particle.velocityX += particle.accelerationX;
+        }
+        if (particle.accelerationY) {
+            particle.velocityY += particle.accelerationY;
         }
         particle.x += particle.velocityX * (dt / 16);
         particle.y += particle.velocityY * (dt / 16);
