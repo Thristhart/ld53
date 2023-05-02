@@ -422,11 +422,13 @@ export async function healActor(from: Actor, target: Actor, heal: number) {
 
 export function damageEntity(from: Actor, target: BaseEntity & Actor, damage: number) {
     const particlePos = gridLocationToCanvas(target.x, target.y);
-    emitDamageParticle(
-        particlePos[0] + (GRID_SQUARE_WIDTH / 2) * camera.scale,
-        particlePos[1] + (GRID_SQUARE_HEIGHT / 2) * camera.scale,
-        damage
-    );
+    if (!(target instanceof Fire)) {
+        emitDamageParticle(
+            particlePos[0] + (GRID_SQUARE_WIDTH / 2) * camera.scale,
+            particlePos[1] + (GRID_SQUARE_HEIGHT / 2) * camera.scale,
+            damage
+        );
+    }
     damageActor(from, target, damage);
 }
 
